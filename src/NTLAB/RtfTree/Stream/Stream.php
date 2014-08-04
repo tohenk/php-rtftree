@@ -244,7 +244,7 @@ class Stream
      */
     public function remain()
     {
-        return substr($this->content, $this->pos);
+        return mb_substr($this->content, $this->pos, null, $this->encoding);
     }
 
     /**
@@ -256,6 +256,6 @@ class Stream
      */
     public function pick($start, $len)
     {
-        return substr($this->content, $start, $len);
+        return mb_substr($this->content, $start, $len, $this->encoding);
     }
 }
