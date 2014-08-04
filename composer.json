@@ -1,5 +1,5 @@
 {
-	"name" : "ntlab/php-rtf-tree",
+	"name" : "ntlab/rtf-tree",
 	"type" : "library",
 	"description" : "PHP Library for RTF processing",
 	"keywords" : [
