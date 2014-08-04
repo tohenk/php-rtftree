@@ -1021,6 +1021,8 @@ class Builder
             $this->buildGenerator();
             $this->buildDocSettings();
             $this->buildData();
+
+            $this->dirty = false;
         }
 
         return $this;
