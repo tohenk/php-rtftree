@@ -27,6 +27,7 @@
 namespace NTLAB\RtfTree\Node;
 
 use NTLAB\RtfTree\Common\Base;
+use NTLAB\RtfTree\Common\HexUtil;
 use NTLAB\RtfTree\Lexer\Token;
 use NTLAB\RtfTree\Lexer\Char;
 use NTLAB\RtfTree\Stream\Stream;
@@ -629,7 +630,7 @@ class Node extends Base
             if ($this->is(static::KEYWORD)) {
                 $result .= (string) $this->parameter;
             } else if ($this->is(static::CONTROL) && $this->key === Char::HEX_MARKER) {
-                $result .= dechex($this->parameter);
+                $result .= HexUtil::toHex($this->parameter, 2);
             }
         }
         // add ending
