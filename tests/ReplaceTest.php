@@ -6,6 +6,8 @@ use NTLAB\RtfTree\Node\Tree;
 
 class ReplaceTest extends BaseTest
 {
+    protected $times = array();
+
     public function testFindText()
     {
         $tree = new Tree();
@@ -31,17 +33,28 @@ class ReplaceTest extends BaseTest
         $this->assertEquals($this->loadResult('repl-01.txt'), $tree->getRtf(), 'Replaced rtf matched');
     }
 
+    protected function timedReplace(Tree $tree, $from, $to)
+    {
+        $time = microtime(true);
+        $result = $tree->getMainGroup()->replaceTextEx($from, $to);
+        $delta = microtime(true) - $time;
+        $this->times[] = sprintf("Time for %s = %f", $from, $delta);
+
+        return $result;
+    }
+
     public function testReplaceTextEx()
     {
         $tree = new Tree();
         $tree->setIgnoreWhitespace(false);
         $tree->loadFromFile($this->getFixtureDir().'test-repl-02.rtf');
 
-        $this->assertEquals(true, $tree->getMainGroup()->replaceTextEx('<TAG1>', 'Tag 1'), 'Sucessfuly replaced tag whithin single node');
-        $this->assertEquals(true, $tree->getMainGroup()->replaceTextEx('<TAG2>', 'Tag 2'), 'Sucessfuly replaced tag adjacent to previous tag');
-        $this->assertEquals(true, $tree->getMainGroup()->replaceTextEx('<THIS_IS_A_TAG>', '{Replace TAG}'), 'Sucessfuly replaced tag across nodes');
-        $this->assertEquals(true, $tree->getMainGroup()->replaceTextEx('<REPLACE_ME>', 'Петяв ñáéíó'), 'Sucessfuly replaced encoded text');
+        $this->assertEquals(true, $this->timedReplace($tree, '<TAG1>', 'Tag 1'), 'Sucessfuly replaced tag whithin single node');
+        $this->assertEquals(true, $this->timedReplace($tree, '<TAG2>', 'Tag 2'), 'Sucessfuly replaced tag adjacent to previous tag');
+        $this->assertEquals(true, $this->timedReplace($tree, '<THIS_IS_A_TAG>', '{Replace TAG}'), 'Sucessfuly replaced tag across nodes');
+        $this->assertEquals(true, $this->timedReplace($tree, '<REPLACE_ME>', 'Петяв ñáéíó'), 'Sucessfuly replaced encoded text');
 
         $this->assertEquals($this->loadResult('repl-02.txt'), $tree->getRtf(), 'Replaced content matched');
+        $this->saveOut(implode("\n", $this->times), 'replace-ex-times.txt');
     }
 }

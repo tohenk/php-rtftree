@@ -42,6 +42,10 @@ class Node extends Base
     const GROUP = 5;
     const WHITESPACE = 6;
 
+    const TEXT_ALL = 1;
+    const TEXT_RAW = 2;
+    const TEXT_PLAIN = 3;
+
     /**
      * Node children.
      *
@@ -456,26 +460,30 @@ class Node extends Base
     /**
      * Get node text.
      *
-     * @param boolean $raw  Return raw value
+     * @param int $textKind  The kind of text to return
      * @param int $ignoreNChars  Ignore number of chars
      * @return string
      */
-    protected function getText($raw, $ignoreNChars = 1)
+    protected function getText($textKind = self::TEXT_ALL, $ignoreNChars = 1)
     {
         $result = null;
         switch ($this->type) {
             case static::GROUP:
                 $node = $this->getFirstChild();
                 if ($node->isEquals('*')) {
+                    // skip special group when get plain text
+                    if ($textKind === static::TEXT_PLAIN) {
+                        break;
+                    }
                     $node = $node->getNextSibling();
                 }
-                if ($raw || !$node->isEquals(array(
+                if ($textKind === static::TEXT_RAW || !$node->isEquals(array(
                     'fonttbl', 'colortbl', 'stylesheet', 'generator', 'info', 'pict',
                     'object', 'fldinst',
                 ))) {
                     $uc = $ignoreNChars;
                     foreach ($this->children as $child) {
-                        $result .= $child->getText($raw, $uc);
+                        $result .= $child->getText($textKind, $uc);
                         if ($child->is(static::KEYWORD) && $child->isEquals('uc')) {
                             $uc = $child->parameter;
                         }
@@ -521,7 +529,6 @@ class Node extends Base
                 }
                 break;
         }
-        //echo sprintf("%s = %s\n", (string) $this, var_export($result, true));
 
         return $result;
     }
@@ -533,7 +540,7 @@ class Node extends Base
      */
     public function getNodeText()
     {
-        return $this->getText(false);
+        return $this->getText(static::TEXT_ALL);
     }
 
     /**
@@ -543,7 +550,17 @@ class Node extends Base
      */
     public function getRawText()
     {
-        return $this->getText(true);
+        return $this->getText(static::TEXT_RAW);
+    }
+
+    /**
+     * Get the node raw text.
+     *
+     * @return string
+     */
+    public function getPlainText()
+    {
+        return $this->getText(static::TEXT_PLAIN);
     }
 
     /**
@@ -736,19 +753,19 @@ class Node extends Base
      * @param int $startPos  Start position of text
      * @return \NTLAB\RtfTree\Node\Nodes
      */
-    protected function selectChildNodesForText($text, $startPos)
+    protected function selectNodesForText($text, $startPos = null)
     {
         $sIdx = null;
         $eIdx = null;
         // find start and end position in the children list
         $ctext = null;
         for ($i = 0; $i < count($this->children); $i++) {
-            $ctext .= $this->children[$i]->getNodeText();
-            if (strlen($ctext) >= $startPos + 1) {
+            $ctext .= $this->children[$i]->getPlainText();
+            if (mb_strlen($ctext) >= $startPos + 1) {
                 if (null === $sIdx) {
                     $sIdx = $i;
                 }
-                if ($startPos === strpos($ctext, $text)) {
+                if (false !== ($p = mb_strpos($ctext, $text)) && (null === $startPos || $p === $startPos)) {
                     $eIdx = $i;
                     break;
                 }
@@ -757,7 +774,7 @@ class Node extends Base
         if (null !== $sIdx && null !== $eIdx) {
             // only single node matched and it is a group
             if ($sIdx === $eIdx && $this->children[$sIdx]->is(static::GROUP)) {
-                return $this->children[$sIdx]->selectChildNodesForText($text, $startPos);
+                return $this->children[$sIdx]->selectNodesForText($text);
             }
             $nodes = new Nodes();
             for ($i = $sIdx; $i <= $eIdx; $i++) {
@@ -1191,7 +1208,7 @@ class Node extends Base
     {
         $nodes = new Nodes();
         foreach ($this->children as $child) {
-            if ($child->is(static::TEXT) && false !== strpos($child->key, $text)) {
+            if ($child->is(static::TEXT) && false !== mb_strpos($child->key, $text)) {
                 $nodes[] = $child;
             }
             $nodes->append($child->findText($text));
@@ -1230,40 +1247,35 @@ class Node extends Base
      */
     public function replaceTextEx($from, $to)
     {
-        // found exact match on text node
-        if ($this->is(static::TEXT)) {
-            if ((null === $this->parent || $this->isPlainText()) && false !== strpos($this->key, $from))
-            {
-                $replaced = str_replace($from, $to, $this->key);
-                if ($this->parent) {
-                    $nodes = $this->createText($replaced, true);
-                    $this->key = $nodes[0]->getKey();
-                    if (count($nodes) > 1) {
-                        $node = $this;
-                        for ($i = 1; $i < count($nodes); $i++) {
-                            $index = $node->getNodeIndex() + 1;
-                            $node = $nodes[$i];
-                            $this->parent->insertChild($index, $node);
-                        }
-                    }
-                } else {
-                    $this->key = $replaced;
-                }
-
-                return true;
-            }
-        }
-        // found exact match on child
-        foreach ($this->children as $child) {
-            if ($child->replaceTextEx($from, $to)) {
-                return true;
-            }
-        }
-        // found match on across child node
-        if (false !== ($pos = strpos($this->getNodeText(), $from))) {
-            if ($nodes = $this->selectChildNodesForText($from, $pos)) {
+        // plain text found
+        if (false !== ($pos = mb_strpos($this->getPlainText(), $from))) {
+            // select child nodes contains text
+            if ($nodes = $this->selectNodesForText($from, $pos)) {
+                // combine matched nodes as single text node
                 if ($node = $this->combineNodesText($nodes)) {
-                    $node->replaceTextEx($from, $to);
+                    // insert replacement
+                    $replacement = null;
+                    $pos = mb_strpos($node->getKey(), $from);
+                    if ($pos > 0) {
+                        $replacement = mb_substr($node->getKey(), 0, $pos);
+                    }
+                    $replacement .= $to;
+                    if (($pos = $pos + mb_strlen($from)) < mb_strlen($node->getKey())) {
+                        $replacement .= mb_substr($node->getKey(), $pos);
+                    }
+                    if (($parent = $node->getParent()) && mb_strlen($replacement)) {
+                        $nodes = $this->createText($replacement, true);
+                        $node->setKey($nodes[0]->getKey());
+                        if (count($nodes) > 1) {
+                            for ($i = 1; $i < count($nodes); $i++) {
+                                $index = $node->getNodeIndex() + 1;
+                                $node = $nodes[$i];
+                                $parent->insertChild($index, $node);
+                            }
+                        }
+                    } else {
+                        $node->setKey($replacement);
+                    }
 
                     return true;
                 }
