@@ -292,6 +292,10 @@ class Tree
             if ($token->is(Token::EOF)) {
                 break;
             }
+            // check current parent
+            if (null === $node) {
+                throw new \RuntimeException(sprintf('No parent available for %s at %d, document may be malformed.', $token, $this->lexer->getStream()->getPos()));
+            }
             switch ($token->getType()) {
                 case Token::GROUP_START:
                     $nextNode = Node::create(Node::GROUP, 'GROUP');

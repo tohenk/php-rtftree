@@ -222,4 +222,14 @@ class Lexer
 
         return $token;
     }
+
+    /**
+     * Get input stream.
+     *
+     * @return \NTLAB\RtfTree\Stream\Stream
+     */
+    public function getStream()
+    {
+        return $this->stream;
+    }
 }
