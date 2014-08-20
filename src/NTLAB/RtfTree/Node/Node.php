@@ -78,6 +78,15 @@ class Node extends Base
     /**
      * @var array
      */
+    protected static $specialGroups = array(
+        'fonttbl', 'colortbl', 'stylesheet', 'listtable', 'listoverridetable',
+        'rsidtbl', 'xmlnstbl', 'generator', 'info', 'pict', 'object', 'fldinst',
+        'upr',
+    );
+
+    /**
+     * @var array
+     */
     protected static $nodeTypes = array(
         self::NONE        => '',
         self::ROOT        => 'Root',
@@ -87,6 +96,21 @@ class Node extends Base
         self::GROUP       => 'Group',
         self::WHITESPACE  => 'Whitespace',
     );
+
+    /**
+     * Register special groups.
+     *
+     * @param string $name  Group name
+     */
+    public static function registerSpecialGroup($names)
+    {
+        $names = is_array($names) ? $names : array($names);
+        foreach ($names as $name) {
+            if (!in_array($name, static::$specialGroups)) {
+                static::$specialGroups[] = $name;
+            }
+        }
+    }
 
     /**
      * Constructor.
@@ -478,10 +502,7 @@ class Node extends Base
                     }
                     $node = $node->getNextSibling();
                 }
-                if ($textKind === static::TEXT_RAW || !$node->isEquals(array(
-                    'fonttbl', 'colortbl', 'stylesheet', 'generator', 'info', 'pict',
-                    'object', 'fldinst',
-                ))) {
+                if ($textKind === static::TEXT_RAW || !$node->isEquals(static::$specialGroups)) {
                     $uc = $ignoreNChars;
                     foreach ($this->children as $child) {
                         $result .= $child->getText($textKind, $uc);
