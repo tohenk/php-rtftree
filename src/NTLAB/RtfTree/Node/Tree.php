@@ -212,7 +212,7 @@ class Tree
         $tree->mergeSpecial = $this->mergeSpecial;
         $tree->ignoreWhitespace = $this->ignoreWhitespace;
         foreach ($this->root->getChildren() as $child) {
-            $tree->root->appendChilds($child->cloneNode());
+            $tree->root->appendChild($child->cloneNode());
         }
 
         return $tree;
