@@ -46,6 +46,8 @@ if (!is_readable($file = $arguments[0])) {
 use NTLAB\RtfTree\Node\Tree;
 
 $tree = new Tree();
+$tree->setIgnoreMalformed(true);
+$tree->setIgnoreWhitespace(false);
 if (!$tree->loadFromFile($file)) {
     echo "Not a valid document!\n";
     exit();
