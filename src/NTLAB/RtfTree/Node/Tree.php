@@ -68,6 +68,11 @@ class Tree
     protected $ignoreWhitespace = true;
 
     /**
+     * @var boolean
+     */
+    protected $ignoreMalformed = false;
+
+    /**
      * @var \NTLAB\RtfTree\Encoding\Encoding
      */
     protected $encoding;
@@ -156,6 +161,29 @@ class Tree
     public function setIgnoreWhitespace($value)
     {
         $this->ignoreWhitespace = (bool) $value;
+
+        return $this;
+    }
+
+    /**
+     * Is ignore malformed enabled.
+     *
+     * @return boolean
+     */
+    public function getIgnoreMalformed()
+    {
+        return $this->ignoreMalformed;
+    }
+
+    /**
+     * Set ignore malformed.
+     *
+     * @param boolean $value  Ignore malformed
+     * @return \NTLAB\RtfTree\Node\Tree
+     */
+    public function setIgnoreMalformed($value)
+    {
+        $this->ignoreMalformed = (bool) $value;
 
         return $this;
     }
@@ -294,7 +322,11 @@ class Tree
             }
             // check current parent
             if (null === $node) {
-                throw new \RuntimeException(sprintf('No parent available for %s at %d, document may be malformed.', $token, $this->lexer->getStream()->getPos()));
+                if ($this->ignoreMalformed) {
+                    $node = $this->root;
+                } else {
+                    throw new \RuntimeException(sprintf('No parent available for %s at %d, document may be malformed.', $token, $this->lexer->getStream()->getPos()));
+                }
             }
             switch ($token->getType()) {
                 case Token::GROUP_START:
