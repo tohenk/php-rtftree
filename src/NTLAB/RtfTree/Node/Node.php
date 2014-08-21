@@ -816,20 +816,31 @@ class Node extends Base
     protected function combineNodesText(Nodes $nodes)
     {
         if ($nodes && count($nodes)) {
-            $node = $nodes[0];
-            if ($node->is(static::GROUP)) {
-                $node = $node->getLastChild();
+            $topNode = $nodes[0];
+            // if node is group then find first text node
+            if ($topNode->is(static::GROUP)) {
+                $text = $topNode->getPlainText();
+                $node = $topNode->selectSingleChildNodeTyped(Node::TEXT);
+                $index = $node->getNodeIndex();
+                while ($index < count($topNode->getChildren()) - 1) {
+                    $topNode->removeChildAt($index + 1);
+                }
+                if ($node->key != $text) {
+                  $node->key = $text;
+                }
+                // set as top node
+                $topNode = $node;
             }
             while (count($nodes) > 1) {
                 $nextNode = $nodes[1];
-                $node->key .= $nextNode->getNodeText();
+                $topNode->key .= $nextNode->getPlainText();
                 if ($nextNode->parent) {
                     $nextNode->parent->removeChild($nextNode);
                 }
                 unset($nodes[1]);
             }
 
-            return $node;
+            return $topNode;
         }
     }
 
