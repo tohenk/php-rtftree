@@ -212,7 +212,7 @@ class Tree
         $result = null;
         if (($firstChild = $this->root->getFirstChild()) && ($node = $firstChild->selectSingleChildNode('pard'))) {
             for ($i = $node->getNodeIndex(); $i < count($firstChild->getChildren()); $i++) {
-                $result .= $firstChild->getChildAt($i)->getNodeText();
+                $result .= $firstChild->getChildAt($i)->getPlainText();
             }
         }
 
