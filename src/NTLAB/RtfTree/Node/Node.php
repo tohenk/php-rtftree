@@ -274,7 +274,7 @@ class Node extends Base
                 }
                 // is character need escaping
                 if ($separateEscaped && Char::isEscapable($stream->getChar())) {
-                    $nodes[] = self::create(Node::TEXT, $stream->getChar());
+                    $nodes[] = self::create(static::TEXT, $stream->getChar());
                     continue;
                 }
                 // is character must be hex encoded?
@@ -495,6 +495,12 @@ class Node extends Base
         switch ($this->type) {
             case static::GROUP:
                 $node = $this->getFirstChild();
+                // ignore whitespace
+                while ($node->is(static::WHITESPACE)) {
+                    if (!($node = $node->getNextNode())) {
+                        break;
+                    }
+                }
                 if ($node->isEquals('*')) {
                     // skip special group when get plain text
                     if ($textKind === static::TEXT_PLAIN) {
@@ -816,11 +822,13 @@ class Node extends Base
     protected function combineNodesText(Nodes $nodes)
     {
         if ($nodes && count($nodes)) {
+            $isGroup = false;
             $topNode = $nodes[0];
             // if node is group then find first text node
             if ($topNode->is(static::GROUP)) {
+                $isGroup = true;
                 $text = $topNode->getPlainText();
-                $node = $topNode->selectSingleChildNodeTyped(Node::TEXT);
+                $node = $topNode->selectSingleChildNodeTyped(static::TEXT);
                 $index = $node->getNodeIndex();
                 while ($index < count($topNode->getChildren()) - 1) {
                     $topNode->removeChildAt($index + 1);
@@ -833,7 +841,17 @@ class Node extends Base
             }
             while (count($nodes) > 1) {
                 $nextNode = $nodes[1];
+                $isLast = count($nodes) == 2;
                 $topNode->key .= $nextNode->getPlainText();
+                // combine between group
+                if ($isGroup && $nextNode->is(static::GROUP) && $isLast) {
+                    // copy remaining nodes after the last text node
+                    $textNodes = $nextNode->selectChildNodesTyped(static::TEXT);
+                    $lastText = $textNodes[count($textNodes) - 1];
+                    for ($i = $lastText->getNodeIndex() + 1; $i < count($nextNode->getChildren()); $i++) {
+                        $topNode->getParent()->appendChild($nextNode->getChildAt($i)->cloneNode());
+                    }
+                }
                 if ($nextNode->parent) {
                     $nextNode->parent->removeChild($nextNode);
                 }
