@@ -93,10 +93,9 @@ class Lexer
      */
     protected function parseWhitespace(Token $token)
     {
-        $token->setType(Token::WHITESPACE);
-        $token->setKey(null);
+        $key = null;
         while (true) {
-            $token->setKey($token->getKey().$this->reader->getChar());
+            $key .= $this->reader->getChar();
             if (!$this->read() || !$this->reader->isWhitespace()) {
                 break;
             }
@@ -104,6 +103,8 @@ class Lexer
         if (!$this->reader->isEof()) {
             $this->prev();
         }
+        $token->setType(Token::WHITESPACE);
+        $token->setKey($key);
 
         return $this;
     }
@@ -116,44 +117,41 @@ class Lexer
      */
     protected function parseKeyword(Token $token)
     {
-        $token->setKey(null);
         // Pick one character
         if ($this->read()) {
+            $key = null;
+            $parameter = null;
             // is escape sequence for {, }, and \
             if ($this->reader->isEscapable()) {
-                $token->setType(Token::TEXT);
-                $token->setKey($this->reader->getChar());
+                $type = Token::TEXT;
+                $key = $this->reader->getChar();
             // is letter
             } else if ($this->reader->isLetter()) {
+                $type = Token::KEYWORD;
                 while (true) {
-                    $token->setKey($token->getKey().$this->reader->getChar());
+                    $key .= $this->reader->getChar();
                     if (!$this->read() || !$this->reader->isLetter()) {
                         break;
                     }
                 }
-                $token->setType(Token::KEYWORD);
                 // pick for keyword parameter, allow minus sign too
                 if (!$this->reader->isEof() && ($this->reader->isDigit() || $this->reader->isChar('-'))) {
-                    $parameter = null;
                     while (true) {
                         $parameter .= $this->reader->getChar();
                         if (!$this->read() || (!$this->reader->isDigit() && !$this->reader->isChar('-'))) {
                             break;
                         }
                     }
-                    $token->setHasParameter(true);
-                    $token->setParameter((int) $parameter);
                 }
                 // move back one character
                 if (!$this->reader->isEof() && !$this->reader->isKeywordStop()) {
                     $this->prev();
                 }
             } else {
-                $token->setType(Token::CONTROL);
-                $token->setKey($this->reader->getChar());
+                $type = Token::CONTROL;
+                $key = $this->reader->getChar();
                 // is hexa character
                 if ($this->reader->isHexEscapable()) {
-                    $parameter = null;
                     $count = 2;
                     while ($count > 0) {
                         if (!$this->read()) {
@@ -162,11 +160,14 @@ class Lexer
                         $parameter .= $this->reader->getChar();
                         $count--;
                     }
-                    if (2 === strlen($parameter)) {
-                        $token->setHasParameter(true);
-                        $token->setParameter(hexdec($parameter));
-                    }
+                    $parameter = 2 === strlen($parameter) ? hexdec($parameter) : null;
                 }
+            }
+            $token->setType($type);
+            $token->setKey($key);
+            if (null !== $parameter) {
+                $token->setHasParameter(true);
+                $token->setParameter((int) $parameter);
             }
         }
 
@@ -181,10 +182,9 @@ class Lexer
      */
     protected function parseText(Token $token)
     {
-        $token->setType(Token::TEXT);
-        $token->setKey(null);
+        $key = null;
         while (true) {
-            $token->setKey($token->getKey().$this->reader->getChar());
+            $key .= $this->reader->getChar();
             if (!$this->read() || $this->reader->isEscapable() || $this->reader->isWhitespace()) {
                 break;
             }
@@ -192,6 +192,8 @@ class Lexer
         if (!$this->reader->isEof()) {
             $this->prev();
         }
+        $token->setType(Token::TEXT);
+        $token->setKey($key);
 
         return $this;
     }
