@@ -47,6 +47,10 @@ class Node extends Base
     const TEXT_RAW = 2;
     const TEXT_PLAIN = 3;
 
+    const TREE_NODE_NONE = 0;
+    const TREE_NODE_TYPE = 1;
+    const TREE_NODE_INDEX = 2;
+
     /**
      * Node children.
      *
@@ -1294,18 +1298,17 @@ class Node extends Base
      * Get tree representation of a node and its child.
      *
      * @param int $level  Start level
-     * @param boolean $showNodeType  Show node type
-     * @param boolean $showNodeIndex  Show node index
+     * @param int $flag  Tree flag
      * @return string
      */
-    public function asTree($level = 0, $showNodeType = true, $showNodeIndex = true)
+    public function asTree($level = 0, $flag = self::TREE_NODE_NONE)
     {
         $result = null;
         // indentation
         for ($i = 1; $i <= $level; $i++) {
             $result .= str_repeat(' ', 4);
         }
-        if ($showNodeIndex && (null !== ($index = $this->getNodeIndex()))) {
+        if (($flag & static::TREE_NODE_INDEX == static::TREE_NODE_INDEX) && (null !== ($index = $this->getNodeIndex()))) {
             $count = strlen((string) count($this->parent->getChildren()));
             $no = (string) $index;
             if (strlen($no) < $count) {
@@ -1328,7 +1331,7 @@ class Node extends Base
                 break;
 
             default:
-                if ($showNodeType) {
+                if ($flag & static::TREE_NODE_TYPE == static::TREE_NODE_TYPE) {
                     $result .= $this->getTypeText().': ';
                 }
                 $result .= $this->key;
@@ -1342,7 +1345,7 @@ class Node extends Base
         }
         // childs
         foreach ($this->children as $child) {
-            $result .= $child->asTree($level + 1, $showNodeType, $showNodeIndex);
+            $result .= $child->asTree($level + 1, $flag);
         }
 
         return $result;

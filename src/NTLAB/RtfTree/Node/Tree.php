@@ -429,11 +429,11 @@ class Tree
      */
     public function toStringEx()
     {
-        return $this->root->asTree(0, true, true);
+        return $this->root->asTree(0, Node::TREE_NODE_INDEX | Node::TREE_NODE_TYPE);
     }
 
     public function __toString()
     {
-        return $this->root->asTree(0, false, false);
+        return $this->root->asTree(0);
     }
 }
