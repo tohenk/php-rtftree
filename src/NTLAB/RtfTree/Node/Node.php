@@ -62,20 +62,6 @@ class Node extends Base
     protected $parent;
 
     /**
-     * Node root.
-     *
-     * @var \NTLAB\RtfTree\Node\Node
-     */
-    protected $root;
-
-    /**
-     * Node tree.
-     *
-     * @var \NTLAB\RtfTree\Node\Tree
-     */
-    protected $tree;
-
-    /**
      * @var array
      */
     protected static $specialGroups = array(
@@ -168,9 +154,6 @@ class Node extends Base
     {
         $node = new self();
         $node->type = $type;
-        if (static::ROOT === $type) {
-            $node->root = $node;
-        }
 
         return $node;
     }
@@ -198,12 +181,11 @@ class Node extends Base
      * Decode a character code to string.
      *
      * @param int $code  The string code number
-     * @param \NTLAB\RtfTree\Encoding\Encoding $encoding  The encoder
      * @return string
      */
-    public static function decode($code, Encoding $encoding)
+    public static function decode($code)
     {
-        return $encoding->decode($code);
+        return Encoding::create()->decode($code);
     }
 
     /**
@@ -342,41 +324,9 @@ class Node extends Base
      */
     public function getRoot()
     {
-        return $this->root;
-    }
-
-    /**
-     * Set root node.
-     *
-     * @param \NTLAB\RtfTree\Node\Node $value  The root node
-     * @return \NTLAB\RtfTree\Node\Node
-     */
-    public function setRoot(Node $value)
-    {
-        $this->root = $value;
-
-        return $this;
-    }
-
-    /**
-     * Get node tree.
-     *
-     * @return \NTLAB\RtfTree\Node\Tree
-     */
-    public function getTree()
-    {
-        return $this->tree;
-    }
-
-    /**
-     * Set node tree.
-     *
-     * @param \NTLAB\RtfTree\Node\Tree $value  Node tree
-     * @return \NTLAB\RtfTree\Node\Node
-     */
-    public function setTree(Tree $value)
-    {
-        $this->tree = $value;
+        if ($this->parent) {
+            return $this->parent->getRoot();
+        }
 
         return $this;
     }
@@ -521,7 +471,7 @@ class Node extends Base
 
             case static::CONTROL:
                 if ($this->key === Char::HEX_MARKER) {
-                    $result .= $this->decode($this->parameter, $this->tree->getEncoding());
+                    $result .= $this->decode($this->parameter);
                 }
                 break;
 
@@ -543,17 +493,17 @@ class Node extends Base
                 } else if ($this->isEquals('line')) {
                     $result .= "\r\n";
                 } else if ($this->isEquals('lquote')) {
-                    $result .= /*'‘'*/ $this->tree->getEncoding()->getChar(0x2018);
+                    $result .= /*'‘'*/ Encoding::getChar(0x2018);
                 } else if ($this->isEquals('rquote')) {
-                    $result .= /*'’'*/ $this->tree->getEncoding()->getChar(0x2019);
+                    $result .= /*'’'*/ Encoding::getChar(0x2019);
                 } else if ($this->isEquals('ldblquote')) {
-                    $result .= /*'“'*/ $this->tree->getEncoding()->getChar(0x201C);
+                    $result .= /*'“'*/ Encoding::getChar(0x201C);
                 } else if ($this->isEquals('rdblquote')) {
-                    $result .= /*'”'*/ $this->tree->getEncoding()->getChar(0x201D);
+                    $result .= /*'”'*/ Encoding::getChar(0x201D);
                 } else if ($this->isEquals('emdash')) {
-                    $result .= /*'—'*/ $this->tree->getEncoding()->getChar(0x2014);
+                    $result .= /*'—'*/ Encoding::getChar(0x2014);
                 } else if ($this->isEquals('u')) {
-                    $result .= $this->decode($this->parameter, $this->tree->getEncoding());
+                    $result .= $this->decode($this->parameter);
                 }
                 break;
         }
@@ -719,23 +669,6 @@ class Node extends Base
     }
 
     /**
-     * Update root node.
-     *
-     * @param \NTLAB\RtfTree\Node\Node $node  The node to update
-     * @return \NTLAB\RtfTree\Node\Node
-     */
-    protected function updateNodeRoot(Node $node)
-    {
-        $node->root = $this->root;
-        $node->tree = $this->tree;
-        foreach ($node->children as $child) {
-            $this->updateNodeRoot($child);
-        }
-
-        return $this;
-    }
-
-    /**
      * Check if current node is a group and matched the key.
      *
      * @param string $key  The key to match
@@ -874,7 +807,6 @@ class Node extends Base
     {
         if ($node) {
             $node->parent = $this;
-            $this->updateNodeRoot($node);
             $this->children[] = $node;
         }
 
@@ -908,7 +840,6 @@ class Node extends Base
     public function insertChild($index, Node $node)
     {
         $node->parent = $this;
-        $this->updateNodeRoot($node);
         $this->children->insert($index, $node);
 
         return $this;

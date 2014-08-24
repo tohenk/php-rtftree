@@ -30,7 +30,6 @@ use NTLAB\RtfTree\Stream\Stream;
 use NTLAB\RtfTree\Lexer\Lexer;
 use NTLAB\RtfTree\Lexer\Token;
 use NTLAB\RtfTree\Lexer\Char;
-use NTLAB\RtfTree\Encoding\Encoding;
 
 class Tree
 {
@@ -73,18 +72,11 @@ class Tree
     protected $ignoreMalformed = false;
 
     /**
-     * @var \NTLAB\RtfTree\Encoding\Encoding
-     */
-    protected $encoding;
-
-    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->root = Node::create(Node::ROOT, 'ROOT');
-        $this->root->setTree($this);
-        $this->encoding = Encoding::create();
     }
 
     /**
@@ -95,16 +87,6 @@ class Tree
     public function getRoot()
     {
         return $this->root;
-    }
-
-    /**
-     * Get tree encoding.
-     *
-     * @return \NTLAB\RtfTree\Encoding\Encoding
-     */
-    public function getEncoding()
-    {
-        return $this->encoding;
     }
 
     /**
@@ -256,7 +238,7 @@ class Tree
     {
         if ($token->isText()) {
             $token->setType(Token::TEXT);
-            $token->setKey(Node::decode($token->getParameter(), $this->encoding));
+            $token->setKey(Node::decode($token->getParameter()));
             $token->setHasParameter(false);
 
             return true;
@@ -357,11 +339,6 @@ class Tree
                     if (!$merged) {
                         $nextNode = Node::createFromToken($token);
                         $node->appendChild($nextNode);
-                        /*if ($this->mergeSpecial) {
-                            if ($this->level === 1 && $nextNode->is(Node::KEYWORD) && $nextNode->isEquals('ansicpg')) {
-                                $this->codepage = $nextNode->getParameter();
-                            }
-                        }*/
                     }
                     break;
 
