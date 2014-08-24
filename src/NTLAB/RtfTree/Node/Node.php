@@ -74,6 +74,11 @@ class Node extends Base
     /**
      * @var array
      */
+    protected $caches = array();
+
+    /**
+     * @var array
+     */
     protected static $specialGroups = array(
         'fonttbl', 'colortbl', 'stylesheet', 'listtable', 'listoverridetable',
         'rsidtbl', 'xmlnstbl', 'generator', 'info', 'pict', 'object', 'fldinst',
@@ -479,6 +484,10 @@ class Node extends Base
      */
     protected function getText($textKind = self::TEXT_ALL, $ignoreNChars = 1)
     {
+        // is it cached?
+        if (isset($this->caches[$textKind])) {
+            return $this->caches[$textKind];
+        }
         $result = null;
         switch ($this->type) {
             case static::GROUP:
@@ -545,6 +554,8 @@ class Node extends Base
                 }
                 break;
         }
+        // cache it
+        $this->caches[$textKind] = $result;
 
         return $result;
     }
@@ -703,7 +714,15 @@ class Node extends Base
      */
     public function getRtf()
     {
-        return $this->getRtfInm($this, null);
+        $cacheName = 'RTF';
+        if (isset($this->caches[$cacheName])) {
+            $result = $this->caches[$cacheName];
+        } else {
+            $result = $this->getRtfInm($this, null);
+            $this->caches[$cacheName] = $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -836,6 +855,23 @@ class Node extends Base
     }
 
     /**
+     * Clear text caches.
+     *
+     * @return \NTLAB\RtfTree\Node\Node
+     */
+    protected function clearCache()
+    {
+        if (count($this->caches)) {
+            $this->caches = array();
+        }
+        if ($this->parent) {
+            $this->parent->clearCache();
+        }
+
+        return $this;
+    }
+
+    /**
      * Append a child node.
      *
      * @param \NTLAB\RtfTree\Node\Node $node  The child node
@@ -846,6 +882,7 @@ class Node extends Base
         if ($node) {
             $node->parent = $this;
             $this->children[] = $node;
+            $this->clearCache();
         }
 
         return $this;
@@ -879,6 +916,7 @@ class Node extends Base
     {
         $node->parent = $this;
         $this->children->insert($index, $node);
+        $this->clearCache();
 
         return $this;
     }
@@ -892,6 +930,7 @@ class Node extends Base
     public function removeChild(Node $node)
     {
         $this->children->remove($node);
+        $this->clearCache();
 
         return $this;
     }
@@ -905,6 +944,7 @@ class Node extends Base
     public function removeChildAt($index)
     {
         unset($this->children[$index]);
+        $this->clearCache();
 
         return $this;
     }
