@@ -48,6 +48,8 @@ class ReplaceTest extends BaseTest
         $tree = new Tree();
         $tree->setIgnoreWhitespace(false);
         $tree->loadFromFile($this->getFixtureDir().'test-repl-02.rtf');
+        $this->times[] = sprintf("Document loaded in %f", $tree->getParseTime());
+        $this->saveOut($tree->toStringExTimed(), 'node-load-times.txt');
 
         $this->assertEquals(true, $this->timedReplace($tree, '<TAG1>', 'Tag 1'), 'Sucessfuly replaced tag whithin single node');
         $this->assertEquals(true, $this->timedReplace($tree, '<TAG2>', 'Tag 2'), 'Sucessfuly replaced tag adjacent to previous tag');

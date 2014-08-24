@@ -50,6 +50,7 @@ class Node extends Base
     const TREE_NODE_NONE = 0;
     const TREE_NODE_TYPE = 1;
     const TREE_NODE_INDEX = 2;
+    const TREE_NODE_TIME = 4;
 
     /**
      * Node children.
@@ -64,6 +65,11 @@ class Node extends Base
      * @var \NTLAB\RtfTree\Node\Node
      */
     protected $parent;
+
+    /**
+     * @var float
+     */
+    protected $time;
 
     /**
      * @var array
@@ -286,6 +292,34 @@ class Node extends Base
 
             return $nodes;
         }
+    }
+
+    /**
+     * Get node parse time.
+     *
+     * @return float
+     */
+    public function getTime()
+    {
+        return $this->time;
+    }
+
+    /**
+     * Add node parse time.
+     *
+     * @param float $time  Parse time
+     * @return \NTLAB\RtfTree\Node\Node
+     */
+    public function addTime($time)
+    {
+        if (null !== $time) {
+            $this->time = (null !== $this->time ? $this->time : 0) + $time;
+            if ($this->parent) {
+                $this->parent->addTime($time);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -1339,6 +1373,9 @@ class Node extends Base
                     $result .= ' '.(string) $this->parameter;
                 }
                 break;
+        }
+        if (($flag & static::TREE_NODE_TIME == static::TREE_NODE_TIME) && $this->time) {
+            $result .= sprintf(' (%s)', $this->time);
         }
         if ($result) {
             $result .= "\r\n";

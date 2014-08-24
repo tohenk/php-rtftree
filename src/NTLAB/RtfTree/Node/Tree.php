@@ -57,6 +57,11 @@ class Tree
     protected $level;
 
     /**
+     * @var float
+     */
+    protected $parseTime;
+
+    /**
      * @var boolean
      */
     protected $mergeSpecial = false;
@@ -229,6 +234,16 @@ class Tree
     }
 
     /**
+     * Get the spend time for last parsed tree.
+     *
+     * @return float
+     */
+    public function getParseTime()
+    {
+        return $this->parseTime;
+    }
+
+    /**
      * Force token as text token.
      *
      * @param \NTLAB\RtfTree\Lexer\Token $token  The token
@@ -297,7 +312,9 @@ class Tree
         $this->level = 0;
         $node = $this->root;
         while (true) {
+            $start = microtime(true);
             $token = $this->lexer->nextToken();
+            $time = microtime(true) - $start;
             // reach EOF?
             if ($token->is(Token::EOF)) {
                 break;
@@ -312,7 +329,7 @@ class Tree
             }
             switch ($token->getType()) {
                 case Token::GROUP_START:
-                    $nextNode = Node::create(Node::GROUP, 'GROUP');
+                    $nextNode = Node::createTyped(Node::GROUP);
                     $node->appendChild($nextNode);
                     $node = $nextNode;
                     $this->level++;
@@ -339,12 +356,17 @@ class Tree
                     if (!$merged) {
                         $nextNode = Node::createFromToken($token);
                         $node->appendChild($nextNode);
+                        $nextNode->addTime($time);
+                    } else {
+                        $node->addTime($time);
                     }
                     break;
 
                 case Token::WHITESPACE:
                     if (!$this->ignoreWhitespace) {
-                        $node->appendChild(Node::createFromToken($token));
+                        $nextNode = Node::createFromToken($token);
+                        $node->appendChild($nextNode);
+                        $nextNode->addTime($time);
                     }
                     break;
 
@@ -369,12 +391,15 @@ class Tree
      */
     public function loadFromStream(Stream $stream)
     {
+        $this->parseTime = null;
         if ($this->lexer) {
             unset($this->lexer);
         }
         $this->root->clear();
         $this->lexer = new Lexer($stream);
+        $start = microtime(true);
         if (0 === $this->parse()) {
+            $this->parseTime = microtime(true) - $start;
 
             return true;
         }
@@ -430,6 +455,16 @@ class Tree
     public function toStringEx()
     {
         return $this->root->asTree(0, Node::TREE_NODE_INDEX | Node::TREE_NODE_TYPE);
+    }
+
+    /**
+     * Get tree representation of tree nodes with time.
+     *
+     * @return string
+     */
+    public function toStringExTimed()
+    {
+        return $this->root->asTree(0, Node::TREE_NODE_INDEX | Node::TREE_NODE_TYPE | Node::TREE_NODE_TIME);
     }
 
     public function __toString()
