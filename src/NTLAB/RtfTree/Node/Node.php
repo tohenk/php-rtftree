@@ -845,11 +845,13 @@ class Node extends Base
                 $topNode->key .= $nextNode->getPlainText();
                 // combine between group
                 if ($isGroup && $nextNode->is(static::GROUP) && $isLast) {
-                    // copy remaining nodes after the last text node
-                    $textNodes = $nextNode->selectChildNodesTyped(static::TEXT);
-                    $lastText = $textNodes[count($textNodes) - 1];
-                    for ($i = $lastText->getNodeIndex() + 1; $i < count($nextNode->getChildren()); $i++) {
-                        $topNode->getParent()->appendChild($nextNode->getChildAt($i)->cloneNode());
+                    if ($nextNode->selectSingleChildNode('cell')) {
+                        // copy remaining nodes after the last text node
+                        $textNodes = $nextNode->selectChildNodesTyped(static::TEXT);
+                        $lastText = $textNodes[count($textNodes) - 1];
+                        for ($i = $lastText->getNodeIndex() + 1; $i < count($nextNode->getChildren()); $i++) {
+                            $topNode->getParent()->appendChild($nextNode->getChildAt($i)->cloneNode());
+                        }
                     }
                 }
                 if ($nextNode->parent) {
