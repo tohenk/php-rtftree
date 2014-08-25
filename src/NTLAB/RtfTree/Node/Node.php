@@ -640,6 +640,11 @@ class Node extends Base
      */
     protected function asRtf($nextNode, $encode = false)
     {
+        // is it cached?
+        $cacheName = 'RTF'.($encode ? '1' : '0');
+        if (isset($this->caches[$cacheName])) {
+            return $this->caches[$cacheName];
+        }
         $result = null;
         // add prefix
         if ($this->is(static::KEYWORD) || $this->is(static::CONTROL)) {
@@ -663,6 +668,8 @@ class Node extends Base
         if ($this->is(static::KEYWORD) && $nextNode && $nextNode->useKeywordStop()) {
             $result .= Char::KEYWORD_STOP;
         }
+        // cache it
+        $this->caches[$cacheName] = $result;
 
         return $result;
     }
@@ -670,39 +677,45 @@ class Node extends Base
     /**
      * Get RTF code representation of a node and its children.
      *
-     * @param \NTLAB\RtfTree\Node\Node $node  The node to convert
      * @param \NTLAB\RtfTree\Node\Node $nextNode  The next node
      * @return string
      */
-    protected function getRtfInm(Node $node, $nextNode)
+    protected function getRtfInm($nextNode)
     {
+        // is it cached?
+        $cacheName = 'RTF';
+        if (isset($this->caches[$cacheName])) {
+            return $this->caches[$cacheName];
+        }
         $result = null;
         // process node itself
         switch (true) {
-            case $node->is(static::ROOT):
+            case $this->is(static::ROOT):
                 // skip root node
                 break;
 
-            case $node->is(static::GROUP):
+            case $this->is(static::GROUP):
                 $result .= Char::BLOCK_START;
                 break;
 
-            case $node->is(static::WHITESPACE):
-                $result .= $node->key;
+            case $this->is(static::WHITESPACE):
+                $result .= $this->key;
                 break;
 
             default:
-                $result .= $node->asRtf($nextNode, true);
+                $result .= $this->asRtf($nextNode, true);
                 break;
         }
         // process node children
-        foreach ($node->children as $child) {
-            $result .= $this->getRtfInm($child, $child->getNextNode());
+        foreach ($this->children as $child) {
+            $result .= $child->getRtfInm($child->getNextNode());
         }
         // process ending
-        if ($node->is(static::GROUP)) {
+        if ($this->is(static::GROUP)) {
             $result .= Char::BLOCK_END;
         }
+        // cache it
+        $this->caches[$cacheName] = $result;
 
         return $result;
     }
@@ -714,15 +727,7 @@ class Node extends Base
      */
     public function getRtf()
     {
-        $cacheName = 'RTF';
-        if (isset($this->caches[$cacheName])) {
-            $result = $this->caches[$cacheName];
-        } else {
-            $result = $this->getRtfInm($this, null);
-            $this->caches[$cacheName] = $result;
-        }
-
-        return $result;
+      return $this->getRtfInm($this, null);
     }
 
     /**
@@ -849,6 +854,7 @@ class Node extends Base
                 }
                 unset($nodes[1]);
             }
+            $topNode->clearCache();
 
             return $topNode;
         }
@@ -1338,6 +1344,7 @@ class Node extends Base
                     } else {
                         $node->setKey($replacement);
                     }
+                    $node->clearCache();
 
                     return true;
                 }
