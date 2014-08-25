@@ -1382,7 +1382,7 @@ class Node extends Base
         for ($i = 1; $i <= $level; $i++) {
             $result .= str_repeat(' ', 4);
         }
-        if (($flag & static::TREE_NODE_INDEX == static::TREE_NODE_INDEX) && (null !== ($index = $this->getNodeIndex()))) {
+        if (($flag & static::TREE_NODE_INDEX) == static::TREE_NODE_INDEX && (null !== ($index = $this->getNodeIndex()))) {
             $count = strlen((string) count($this->parent->getChildren()));
             $no = (string) $index;
             if (strlen($no) < $count) {
@@ -1405,7 +1405,7 @@ class Node extends Base
                 break;
 
             default:
-                if ($flag & static::TREE_NODE_TYPE == static::TREE_NODE_TYPE) {
+                if (($flag & static::TREE_NODE_TYPE) == static::TREE_NODE_TYPE) {
                     $result .= $this->getTypeText().': ';
                 }
                 $result .= $this->key;
@@ -1414,8 +1414,8 @@ class Node extends Base
                 }
                 break;
         }
-        if (($flag & static::TREE_NODE_TIME == static::TREE_NODE_TIME) && $this->time) {
-            $result .= sprintf(' (%s)', $this->time);
+        if (($flag & static::TREE_NODE_TIME) == static::TREE_NODE_TIME && $this->time) {
+            $result .= sprintf(' (%f)', $this->time);
         }
         if ($result) {
             $result .= "\r\n";
