@@ -488,7 +488,7 @@ class Node extends Base
         if (isset($this->caches[$textKind])) {
             return $this->caches[$textKind];
         }
-        $result = null;
+        $result = new IndexedText();
         switch ($this->type) {
             case static::GROUP:
                 $node = $this->getFirstChild();
@@ -508,7 +508,7 @@ class Node extends Base
                 if ($textKind === static::TEXT_RAW || !$node->isEquals(static::$specialGroups)) {
                     $uc = $ignoreNChars;
                     foreach ($this->children as $child) {
-                        $result .= $child->getText($textKind, $uc);
+                        $result->add($child->getText($textKind, $uc), $child);
                         if ($child->is(static::KEYWORD) && $child->isEquals('uc')) {
                             $uc = $child->parameter;
                         }
@@ -518,39 +518,39 @@ class Node extends Base
 
             case static::CONTROL:
                 if ($this->key === Char::HEX_MARKER) {
-                    $result .= $this->decode($this->parameter);
+                    $result->add($this->decode($this->parameter), $this);
                 }
                 break;
 
             case static::TEXT:
                 if (($prev = $this->getPreviousNode()) &&  $prev->is(static::KEYWORD) && $prev->isEquals('u')) {
                     if (strlen($this->key) - $ignoreNChars) {
-                        $result .= substr($this->key, $ignoreNChars);
+                        $result->add(substr($this->key, $ignoreNChars), $this);
                     }
                 } else {
-                    $result .= $this->key;
+                    $result->add($this->key, $this);
                 }
                 break;
 
             case static::KEYWORD:
                 if ($this->isEquals('par')) {
-                    $result .= "\r\n";
+                    $result->add("\r\n", $this);
                 } else if ($this->isEquals('tab')) {
-                    $result .= "\t";
+                    $result->add("\t", $this);
                 } else if ($this->isEquals('line')) {
-                    $result .= "\r\n";
+                    $result->add("\r\n", $this);
                 } else if ($this->isEquals('lquote')) {
-                    $result .= /*'‘'*/ Encoding::getChar(0x2018);
+                    $result->add(/*'‘'*/ Encoding::getChar(0x2018), $this);
                 } else if ($this->isEquals('rquote')) {
-                    $result .= /*'’'*/ Encoding::getChar(0x2019);
+                    $result->add(/*'’'*/ Encoding::getChar(0x2019), $this);
                 } else if ($this->isEquals('ldblquote')) {
-                    $result .= /*'“'*/ Encoding::getChar(0x201C);
+                    $result->add(/*'“'*/ Encoding::getChar(0x201c), $this);
                 } else if ($this->isEquals('rdblquote')) {
-                    $result .= /*'”'*/ Encoding::getChar(0x201D);
+                    $result->add(/*'”'*/ Encoding::getChar(0x201d), $this);
                 } else if ($this->isEquals('emdash')) {
-                    $result .= /*'—'*/ Encoding::getChar(0x2014);
+                    $result->add(/*'—'*/ Encoding::getChar(0x2014), $this);
                 } else if ($this->isEquals('u')) {
-                    $result .= $this->decode($this->parameter);
+                    $result->add($this->decode($this->parameter), $this);
                 }
                 break;
         }
@@ -783,7 +783,7 @@ class Node extends Base
         // find start and end position in the children list
         $ctext = null;
         for ($i = 0; $i < count($this->children); $i++) {
-            $ctext .= $this->children[$i]->getPlainText();
+            $ctext .= (string) $this->children[$i]->getPlainText();
             if (mb_strlen($ctext) >= $startPos + 1) {
                 if (null === $sIdx) {
                     $sIdx = $i;
@@ -839,7 +839,7 @@ class Node extends Base
             while (count($nodes) > 1) {
                 $nextNode = $nodes[1];
                 $isLast = count($nodes) == 2;
-                $topNode->key .= $nextNode->getPlainText();
+                $topNode->key .= (string) $nextNode->getPlainText();
                 // combine between group
                 if ($isGroup && $nextNode->is(static::GROUP) && $isLast) {
                     if ($nextNode->selectSingleChildNode('cell')) {
@@ -1269,6 +1269,17 @@ class Node extends Base
     }
 
     /**
+     * Check if current node contains text.
+     *
+     * @param string $text  Text to search
+     * @return boolean
+     */
+    public function containsText($text)
+    {
+        return false !== mb_strpos($this->getPlainText(), $text);
+    }
+
+    /**
      * Find all text nodes containing specified text.
      *
      * @param string $text  The text to search
@@ -1318,38 +1329,36 @@ class Node extends Base
     public function replaceTextEx($from, $to)
     {
         // plain text found
-        if (false !== ($pos = mb_strpos($this->getPlainText(), $from))) {
-            // select child nodes contains text
-            if ($nodes = $this->selectNodesForText($from, $pos)) {
-                // combine matched nodes as single text node
-                if ($node = $this->combineNodesText($nodes)) {
-                    // insert replacement
-                    $replacement = null;
-                    $pos = mb_strpos($node->getKey(), $from);
-                    if ($pos > 0) {
-                        $replacement = mb_substr($node->getKey(), 0, $pos);
-                    }
-                    $replacement .= $to;
-                    if (($pos = $pos + mb_strlen($from)) < mb_strlen($node->getKey())) {
-                        $replacement .= mb_substr($node->getKey(), $pos);
-                    }
-                    if (($parent = $node->getParent()) && mb_strlen($replacement)) {
-                        $nodes = $this->createText($replacement, true);
-                        $node->setKey($nodes[0]->getKey());
-                        if (count($nodes) > 1) {
-                            for ($i = 1; $i < count($nodes); $i++) {
-                                $index = $node->getNodeIndex() + 1;
-                                $node = $nodes[$i];
-                                $parent->insertChild($index, $node);
-                            }
-                        }
-                    } else {
-                        $node->setKey($replacement);
-                    }
-                    $node->clearCache();
-
-                    return true;
+        $text = $this->getPlainText();
+        if ($nodes = $text->find($from)) {
+            // combine matched nodes as single text node
+            if ($node = $this->combineNodesText($nodes)) {
+                // insert replacement
+                $replacement = null;
+                $pos = mb_strpos($node->getKey(), $from);
+                if ($pos > 0) {
+                    $replacement = mb_substr($node->getKey(), 0, $pos);
                 }
+                $replacement .= $to;
+                if (($pos = $pos + mb_strlen($from)) < mb_strlen($node->getKey())) {
+                    $replacement .= mb_substr($node->getKey(), $pos);
+                }
+                if (($parent = $node->getParent()) && mb_strlen($replacement)) {
+                    $nodes = $this->createText($replacement, true);
+                    $node->setKey($nodes[0]->getKey());
+                    if (count($nodes) > 1) {
+                        for ($i = 1; $i < count($nodes); $i++) {
+                            $index = $node->getNodeIndex() + 1;
+                            $node = $nodes[$i];
+                            $parent->insertChild($index, $node);
+                        }
+                    }
+                } else {
+                    $node->setKey($replacement);
+                }
+                $node->clearCache();
+
+                return true;
             }
         }
 
