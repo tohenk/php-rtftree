@@ -822,14 +822,16 @@ class Node extends Base
             // if node is group then find first text node
             if ($topNode->is(static::GROUP)) {
                 $isGroup = true;
-                $text = $topNode->getPlainText();
                 $node = $topNode->selectSingleChildNodeTyped(static::TEXT);
+                $key = $node->key;
                 $index = $node->getNodeIndex();
                 while ($index < count($topNode->getChildren()) - 1) {
-                    $topNode->removeChildAt($index + 1);
+                    $nextNode = $topNode->getChildAt($index + 1);
+                    $key .= $nextNode->key;
+                    $topNode->removeChild($nextNode);
                 }
-                if ($node->key != $text) {
-                  $node->key = $text;
+                if ($node->key != $key) {
+                  $node->key = $key;
                 }
                 // set as top node
                 $topNode = $node;
