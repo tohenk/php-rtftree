@@ -809,12 +809,31 @@ class Node extends Base
     }
 
     /**
+     * Get child node for text started at position.
+     *
+     * @param int $position  Text position
+     * @return \NTLAB\RtfTree\Node\Node
+     */
+    protected function getChildNodeAtPos($position)
+    {
+        $text = null;
+        for ($i = 0; $i < count($this->children); $i++) {
+            $node = $this->children[$i];
+            $text .= (string) $node->getPlainText();
+            if (mb_strlen($text) >= $position + 1) {
+                return $node;
+            }
+        }
+    }
+
+    /**
      * Combine text nodes into single text node.
      *
      * @param \NTLAB\RtfTree\Node\Nodes $nodes  The text nodes
+     * @param int $startPos  Start position of text
      * @return \NTLAB\RtfTree\Node\Node
      */
-    protected function combineNodesText(Nodes $nodes)
+    protected function combineNodesText(Nodes $nodes, $startPos)
     {
         if ($nodes && count($nodes)) {
             $isGroup = false;
@@ -822,12 +841,14 @@ class Node extends Base
             // if node is group then find first text node
             if ($topNode->is(static::GROUP)) {
                 $isGroup = true;
-                $node = $topNode->selectSingleChildNodeTyped(static::TEXT);
-                $key = $node->key;
+                $node = $topNode->getChildNodeAtPos($startPos);
+                $key = (string) $node->getPlainText();
                 $index = $node->getNodeIndex();
                 while ($index < count($topNode->getChildren()) - 1) {
                     $nextNode = $topNode->getChildAt($index + 1);
-                    $key .= $nextNode->key;
+                    if (!$nextNode->is(static::WHITESPACE)) {
+                        $key .= (string) $nextNode->getPlainText();
+                    }
                     $topNode->removeChild($nextNode);
                 }
                 if ($node->key != $key) {
@@ -1330,9 +1351,9 @@ class Node extends Base
     {
         // plain text found
         $text = $this->getPlainText();
-        if ($nodes = $text->find($from)) {
+        if ($nodes = $text->find($from, $pos)) {
             // combine matched nodes as single text node
-            if ($node = $this->combineNodesText($nodes)) {
+            if ($node = $this->combineNodesText($nodes, $pos)) {
                 // insert replacement
                 $replacement = null;
                 $pos = mb_strpos($node->getKey(), $from);

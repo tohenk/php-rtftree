@@ -62,9 +62,10 @@ class IndexedText
      * @param int $start  Start position
      * @param int $end  End position
      * @param string $text Reference text
+     * @param int $relPos Relative position of the first matched node
      * @return \NTLAB\RtfTree\Node\Nodes
      */
-    protected function getNodes($start, $end, $text)
+    protected function getNodes($start, $end, $text, &$relPos)
     {
         $nodes = new Nodes();
         $found = null;
@@ -73,6 +74,7 @@ class IndexedText
             if (null === $found) {
                 if ($start >= $pos && $start <= $pos + $len - 1) {
                     $found = true;
+                    $relPos = $start - $pos;
                 }
             }
             if ($found) {
@@ -98,12 +100,13 @@ class IndexedText
      * Find all nodes matched text.
      *
      * @param string $text  The text to find
+     * @param int $pos  Matched position
      * @return \NTLAB\RtfTree\Node\Nodes
      */
-    public function find($text)
+    public function find($text, &$relPos)
     {
         if (false !== ($pos = mb_strpos($this->text, $text))) {
-            return $this->getNodes($pos, $pos + mb_strlen($text) - 1, $text);
+            return $this->getNodes($pos, $pos + mb_strlen($text) - 1, $text, $relPos);
         }
     }
 
