@@ -57,6 +57,13 @@ class Stream
     protected $ch = null;
 
     /**
+     * Remaining char.
+     *
+     * @var string
+     */
+    protected $remain = null;
+
+    /**
      * Character encoding.
      *
      * @var string
@@ -154,11 +161,13 @@ class Stream
     /**
      * Move to the next position.
      *
+     * @param int $delta  Next position delta
      * @return int
      */
-    public function next()
+    public function next($delta = 1)
     {
-        $this->pos++;
+        $this->pos += $delta;
+        $this->remain = null;
 
         return $this->pos;
     }
@@ -166,11 +175,13 @@ class Stream
     /**
      * Move to the previous position.
      *
+     * @param int $delta  Previous position delta
      * @return int
      */
-    public function prev()
+    public function prev($delta = 1)
     {
-        $this->pos--;
+        $this->pos -= $delta;
+        $this->remain = null;
 
         return $this->pos;
     }
@@ -242,9 +253,15 @@ class Stream
      *
      * @return string
      */
-    public function remain()
+    public function getRemain()
     {
-        return mb_substr($this->content, $this->pos, null, $this->encoding);
+        if ($this->available()) {
+            if (null == $this->remain) {
+                $this->remain = mb_substr($this->content, $this->pos, null, $this->encoding);
+            }
+
+            return $this->remain;
+        }
     }
 
     /**

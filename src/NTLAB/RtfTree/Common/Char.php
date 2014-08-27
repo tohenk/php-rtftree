@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-namespace NTLAB\RtfTree\Lexer;
+namespace NTLAB\RtfTree\Common;
 
 /**
  * RTF character helper. This class provide utility to read RTF.
@@ -102,7 +102,7 @@ class Char
      */
     public static function isWhitespace($ch)
     {
-        return in_array($ch, array("\0", "\t", "\r", "\n"));
+        return in_array($ch, static::getWhitespaces());
     }
 
     /**
@@ -169,5 +169,15 @@ class Char
     public static function isInHex($ch)
     {
         return preg_match('/[\x00-\x1f\x80-\xff]/', $ch);
+    }
+
+    /**
+     * Get all whitespace characters.
+     *
+     * @return array
+     */
+    public static function getWhitespaces()
+    {
+        return array("\0", "\t", "\r", "\n");
     }
 }

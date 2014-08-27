@@ -27,11 +27,11 @@
 namespace NTLAB\RtfTree\Node;
 
 use NTLAB\RtfTree\Common\Base;
+use NTLAB\RtfTree\Common\Char;
 use NTLAB\RtfTree\Common\HexUtil;
-use NTLAB\RtfTree\Lexer\Token;
-use NTLAB\RtfTree\Lexer\Char;
-use NTLAB\RtfTree\Stream\Stream;
 use NTLAB\RtfTree\Encoding\Encoding;
+use NTLAB\RtfTree\Stream\Stream;
+use NTLAB\RtfTree\Tokenizer\Token;
 
 class Node extends Base
 {
@@ -125,7 +125,7 @@ class Node extends Base
     /**
      * Create node by token referece.
      *
-     * @param \NTLAB\RtfTree\Lexer\Token $token  Reference token
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  Reference token
      * @return \NTLAB\RtfTree\Node\Node
      */
     public static function createFromToken(Token $token)

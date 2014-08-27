@@ -24,9 +24,10 @@
  * SOFTWARE.
  */
 
-namespace NTLAB\RtfTree\Lexer;
+namespace NTLAB\RtfTree\Tokenizer;
 
 use NTLAB\RtfTree\Common\Base;
+use NTLAB\RtfTree\Common\Char;
 
 /**
  * Rtf character tokenizer helper.
@@ -39,7 +40,6 @@ use NTLAB\RtfTree\Common\Base;
  *   GROUP_START    Token is group start
  *   GROUP_END      Token is group end
  *   WHITESPACE     Token is whitespace
- *   EOF            Token is EOF
  *
  * @author Toha
  */
@@ -52,7 +52,6 @@ class Token extends Base
     const GROUP_START = 4;
     const GROUP_END = 5;
     const WHITESPACE = 6;
-    const EOF = 7;
 
     /**
      * @var array
@@ -65,7 +64,6 @@ class Token extends Base
         self::GROUP_START   => 'GROUP_START',
         self::GROUP_END     => 'GROUP_END',
         self::WHITESPACE    => 'WHITESPACE',
-        self::EOF           => 'EOF',
     );
 
     /**

@@ -26,14 +26,14 @@
 
 namespace NTLAB\RtfTree\Stream;
 
-use NTLAB\RtfTree\Lexer\Char;
+use NTLAB\RtfTree\Common\Char;
 
 class Reader
 {
     /**
-     * @var string
+     * @var \NTLAB\RtfTree\Stream\Stream
      */
-    protected $char = null;
+    protected $stream;
 
     /**
      * @var boolean
@@ -41,16 +41,33 @@ class Reader
     protected $eof = null;
 
     /**
+     * Constructor.
+     *
+     * @param \NTLAB\RtfTree\Stream\Stream $stream  Input stream
+     */
+    public function __construct(Stream $stream)
+    {
+        $this->stream = $stream;
+    }
+
+    /**
+     * Get reader stream.
+     *
+     * @return \NTLAB\RtfTree\Stream\Stream
+     */
+    public function getStream()
+    {
+        return $this->stream;
+    }
+
+    /**
      * Read single character from stream.
      *
-     * @param \NTLAB\RtfTree\Stream\Stream $stream
      * @return boolean
      */
-    public function read(Stream $stream)
+    public function read()
     {
-        if (!($this->eof = !$stream->read())) {
-            $this->char = $stream->getChar();
-        }
+        $this->eof = !$this->stream->read();
 
         return !$this->eof;
     }
@@ -72,7 +89,7 @@ class Reader
      */
     public function getChar()
     {
-        return $this->char;
+        return $this->stream->getChar();
     }
 
     /**
@@ -82,7 +99,7 @@ class Reader
      */
     public function isBlockStart()
     {
-        return Char::isBlockStart($this->char);
+        return Char::isBlockStart($this->getChar());
     }
 
     /**
@@ -92,7 +109,7 @@ class Reader
      */
     public function isBlockEnd()
     {
-        return Char::isBlockEnd($this->char);
+        return Char::isBlockEnd($this->getChar());
     }
 
     /**
@@ -102,7 +119,7 @@ class Reader
      */
     public function isKeywordMarker()
     {
-        return Char::isKeywordMarker($this->char);
+        return Char::isKeywordMarker($this->getChar());
     }
 
     /**
@@ -112,7 +129,7 @@ class Reader
      */
     public function isKeywordStop()
     {
-        return Char::isKeywordStop($this->char);
+        return Char::isKeywordStop($this->getChar());
     }
 
     /**
@@ -122,7 +139,7 @@ class Reader
      */
     public function isHexMarker()
     {
-        return Char::isHexMarker($this->char);
+        return Char::isHexMarker($this->getChar());
     }
 
     /**
@@ -132,7 +149,7 @@ class Reader
      */
     public function isWhitespace()
     {
-        return Char::isWhitespace($this->char);
+        return Char::isWhitespace($this->getChar());
     }
 
     /**
@@ -142,7 +159,7 @@ class Reader
      */
     public function isLetter()
     {
-        return Char::isLetter($this->char);
+        return Char::isLetter($this->getChar());
     }
 
     /**
@@ -152,7 +169,7 @@ class Reader
      */
     public function isDigit()
     {
-        return Char::isDigit($this->char);
+        return Char::isDigit($this->getChar());
     }
 
     /**
@@ -162,7 +179,7 @@ class Reader
      */
     public function isEscapable()
     {
-        return Char::isEscapable($this->char);
+        return Char::isEscapable($this->getChar());
     }
 
     /**
@@ -172,7 +189,7 @@ class Reader
      */
     public function isHexEscapable()
     {
-        return Char::isHexEscapable($this->char);
+        return Char::isHexEscapable($this->getChar());
     }
 
     /**
@@ -182,16 +199,47 @@ class Reader
      */
     public function isChar($ch)
     {
-        return $ch == $this->char;
+        return in_array($this->getChar(), is_array($ch) ? $ch : array($ch));
     }
 
     /**
-     * Check if current character is match againt sets of character.
+     * Check if next char is matched.
      *
+     * @param string $ch  The expected character
      * @return boolean
      */
-    public function inSet($sets = array())
+    public function nextIsChar($ch)
     {
-        return in_array($this->char, $sets);
+        if ($this->read()) {
+            if ($this->isChar($ch)) {
+                return true;
+            }
+            $this->stream->prev();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if next stream is matched regular expression.
+     *
+     * @param string $pattern  Regex pattern
+     * @return string
+     */
+    public function expect($pattern)
+    {
+        if ($this->stream->available()) {
+            if (mb_strlen($text = $this->stream->getRemain())) {
+                $pattern = sprintf('/^%s/', $pattern);
+                //echo "\nExpect: ".$pattern." from ".$text."\n";
+                if (preg_match($pattern, $text, $matches)) {
+                    //echo "\nGot: ".$matches[0]."\n";
+                    $expected = $matches[0];
+                    $this->stream->next(mb_strlen($expected));
+
+                    return $expected;
+                }
+            }
+        }
     }
 }

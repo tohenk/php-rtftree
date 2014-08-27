@@ -24,34 +24,10 @@
  * SOFTWARE.
  */
 
-namespace NTLAB\RtfTree\Lexer;
+namespace NTLAB\RtfTree\Tokenizer;
 
-use NTLAB\RtfTree\Stream\Stream;
-use NTLAB\RtfTree\Stream\Reader;
-
-class Lexer
+class TokenizerSimple extends Tokenizer
 {
-    /**
-     * @var \NTLAB\RtfTree\Stream\Stream
-     */
-    protected $stream;
-
-    /**
-     * @var \NTLAB\RtfTree\Stream\Reader
-     */
-    protected $reader;
-
-    /**
-     * Constructor.
-     *
-     * @param \NTLAB\RtfTree\Stream\Stream $stream  Source stream
-     */
-    public function __construct(Stream $stream)
-    {
-        $this->stream = $stream;
-        $this->reader = new Reader();
-    }
-
     /**
      * Read stream.
      *
@@ -59,28 +35,28 @@ class Lexer
      */
     protected function read()
     {
-        return $this->reader->read($this->stream);
+        return $this->reader->read();
     }
 
     /**
      * Move stream position to the previous one.
      *
-     * @return \NTLAB\RtfTree\Lexer\Lexer
+     * @return \NTLAB\RtfTree\Tokenizer\TokenizerSimple
      */
     protected function prev()
     {
-        $this->stream->prev();
+        $this->reader->getStream()->prev();
 
         return $this;
     }
 
     /**
      * Move stream position to the next one.
-     * @return \NTLAB\RtfTree\Lexer\Lexer
+     * @return \NTLAB\RtfTree\Tokenizer\TokenizerSimple
      */
     protected function next()
     {
-        $this->stream->next();
+        $this->reader->getStream()->next();
 
         return $this;
     }
@@ -88,8 +64,8 @@ class Lexer
     /**
      * Parse whitespace token.
      *
-     * @param \NTLAB\RtfTree\Lexer\Token $token  The result token
-     * @return \NTLAB\RtfTree\Lexer\Lexer
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  The result token
+     * @return \NTLAB\RtfTree\Tokenizer\TokenizerSimple
      */
     protected function parseWhitespace(Token $token)
     {
@@ -112,8 +88,8 @@ class Lexer
     /**
      * Parse keyword token.
      *
-     * @param \NTLAB\RtfTree\Lexer\Token $token  The result token
-     * @return \NTLAB\RtfTree\Lexer\Lexer
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  The result token
+     * @return \NTLAB\RtfTree\Tokenizer\TokenizerSimple
      */
     protected function parseKeyword(Token $token)
     {
@@ -177,8 +153,8 @@ class Lexer
     /**
      * Parse text token.
      *
-     * @param \NTLAB\RtfTree\Lexer\Token $token  The result token
-     * @return \NTLAB\RtfTree\Lexer\Lexer
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  The result token
+     * @return \NTLAB\RtfTree\Tokenizer\TokenizerSimple
      */
     protected function parseText(Token $token)
     {
@@ -201,37 +177,26 @@ class Lexer
     /**
      * Get the next token.
      *
-     * @return \NTLAB\RtfTree\Lexer\Token
+     * @return \NTLAB\RtfTree\Tokenizer\Token
      */
     public function nextToken()
     {
+        if (!$this->read()) {
+            return;
+        }
         $token = new Token();
-        if ($this->read()) {
-            if ($this->reader->isBlockStart()) {
-                $token->setType(Token::GROUP_START);
-            } else if ($this->reader->isBlockEnd()) {
-                $token->setType(Token::GROUP_END);
-            } else if ($this->reader->isWhitespace()) {
-                $this->parseWhitespace($token);
-            } else if ($this->reader->isKeywordMarker()) {
-                $this->parseKeyword($token);
-            } else {
-                $this->parseText($token);
-            }
+        if ($this->reader->isBlockStart()) {
+            $token->setType(Token::GROUP_START);
+        } else if ($this->reader->isBlockEnd()) {
+            $token->setType(Token::GROUP_END);
+        } else if ($this->reader->isWhitespace()) {
+            $this->parseWhitespace($token);
+        } else if ($this->reader->isKeywordMarker()) {
+            $this->parseKeyword($token);
         } else {
-            $token->setType(Token::EOF);
+            $this->parseText($token);
         }
 
         return $token;
-    }
-
-    /**
-     * Get input stream.
-     *
-     * @return \NTLAB\RtfTree\Stream\Stream
-     */
-    public function getStream()
-    {
-        return $this->stream;
     }
 }

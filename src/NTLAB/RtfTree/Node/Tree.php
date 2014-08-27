@@ -26,10 +26,10 @@
 
 namespace NTLAB\RtfTree\Node;
 
+use NTLAB\RtfTree\Common\Char;
 use NTLAB\RtfTree\Stream\Stream;
-use NTLAB\RtfTree\Lexer\Lexer;
-use NTLAB\RtfTree\Lexer\Token;
-use NTLAB\RtfTree\Lexer\Char;
+use NTLAB\RtfTree\Tokenizer\Token;
+use NTLAB\RtfTree\Tokenizer\Tokenizer;
 
 class Tree
 {
@@ -47,9 +47,9 @@ class Tree
     protected $source;
 
     /**
-     * @var \NTLAB\RtfTree\Lexer\Lexer
+     * @var \NTLAB\RtfTree\Tokenizer\Tokenizer
      */
-    protected $lexer;
+    protected $tokenizer;
 
     /**
      * @var int
@@ -246,7 +246,7 @@ class Tree
     /**
      * Force token as text token.
      *
-     * @param \NTLAB\RtfTree\Lexer\Token $token  The token
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  The token
      * @return boolean
      */
     protected function forceTokenAsText(Token $token)
@@ -266,7 +266,7 @@ class Tree
      * Try merge text nodes.
      *
      * @param \NTLAB\RtfTree\Node\Node $node  The merged node
-     * @param \NTLAB\RtfTree\Lexer\Token $token  Token to merge
+     * @param \NTLAB\RtfTree\Tokenizer\Token $token  Token to merge
      * @param boolean $deep
      * @return boolean
      */
@@ -313,18 +313,16 @@ class Tree
         $node = $this->root;
         while (true) {
             $start = microtime(true);
-            $token = $this->lexer->nextToken();
-            $time = microtime(true) - $start;
-            // reach EOF?
-            if ($token->is(Token::EOF)) {
+            if (!($token = $this->tokenizer->nextToken())) {
                 break;
             }
+            $time = microtime(true) - $start;
             // check current parent
             if (null === $node) {
                 if ($this->ignoreMalformed) {
                     $node = $this->root;
                 } else {
-                    throw new \RuntimeException(sprintf('No parent available for %s at %d, document may be malformed.', $token, $this->lexer->getStream()->getPos()));
+                    throw new \RuntimeException(sprintf('No parent available for %s at %d, document may be malformed.', $token, $this->tokenizer->getStream()->getPos()));
                 }
             }
             switch ($token->getType()) {
@@ -392,11 +390,11 @@ class Tree
     public function loadFromStream(Stream $stream)
     {
         $this->parseTime = null;
-        if ($this->lexer) {
-            unset($this->lexer);
+        if ($this->tokenizer) {
+            unset($this->tokenizer);
         }
         $this->root->clear();
-        $this->lexer = new Lexer($stream);
+        $this->tokenizer = Tokenizer::create($stream);
         $start = microtime(true);
         if (0 === $this->parse()) {
             $this->parseTime = microtime(true) - $start;
