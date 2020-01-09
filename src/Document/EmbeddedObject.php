@@ -28,7 +28,7 @@ namespace NTLAB\RtfTree\Document;
 
 use NTLAB\RtfTree\Node\Node;
 
-class EmbeddedObject extends Object
+class EmbeddedObject extends DocObject
 {
     /**
      * @var string
@@ -72,7 +72,7 @@ class EmbeddedObject extends Object
      * Set type.
      *
      * @param string $type  The type
-     * @return \NTLAB\RtfTree\Document\Object
+     * @return \NTLAB\RtfTree\Document\EmbeddedObject
      */
     public function setType($type)
     {
@@ -95,7 +95,7 @@ class EmbeddedObject extends Object
      * Set class.
      *
      * @param string $class  The class
-     * @return \NTLAB\RtfTree\Document\Object
+     * @return \NTLAB\RtfTree\Document\EmbeddedObject
      */
     public function setClass($class)
     {

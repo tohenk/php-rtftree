@@ -43,7 +43,7 @@ class IndexedText
      *
      * @param string $text  Text to add
      * @param \NTLAB\RtfTree\Node\Node $node  Owner node
-     * @return \NTLAB\RtfTree\Node\Index
+     * @return \NTLAB\RtfTree\Node\IndexedText
      */
     public function add($text, Node $node)
     {

@@ -31,11 +31,9 @@ use NTLAB\RtfTree\Node\Nodes;
 use NTLAB\RtfTree\Node\Tree;
 use NTLAB\RtfTree\Document\Color;
 use NTLAB\RtfTree\Document\ColorTable;
-use NTLAB\RtfTree\Document\Document;
 use NTLAB\RtfTree\Document\Font;
 use NTLAB\RtfTree\Document\FontTable;
 use NTLAB\RtfTree\Document\Paragraph;
-use NTLAB\RtfTree\Document\PageSetup;
 use NTLAB\RtfTree\Document\Picture;
 use NTLAB\RtfTree\Document\Unit;
 
@@ -358,7 +356,7 @@ class Builder
             $node->appendChild($fontTable->createNode());
         }
         // remove unused fonts
-        foreach ($fonts as $fName => $fNode) {
+        foreach ($fonts as $fNode) {
             $node->removeChild($fNode);
         }
 

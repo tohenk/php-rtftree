@@ -26,13 +26,12 @@
 
 namespace NTLAB\RtfTree\Document;
 
-use NTLAB\RtfTree\Node\Node;
 use NTLAB\RtfTree\Node\Nodes;
 
-class Object
+class DocObject
 {
     /**
-     * @var NTLAB\RtfTree\Node\Node
+     * @var \NTLAB\RtfTree\Node\Node
      */
     protected $node;
 
@@ -184,7 +183,7 @@ class Object
      * Set width.
      *
      * @param float $width  Width
-     * @return \NTLAB\RtfTree\Document\Object
+     * @return \NTLAB\RtfTree\Document\DocObject
      */
     public function setWidth($width)
     {
@@ -208,7 +207,7 @@ class Object
      * Set height.
      *
      * @param float $height  Height
-     * @return \NTLAB\RtfTree\Document\Object
+     * @return \NTLAB\RtfTree\Document\DocObject
      */
     public function setHeight($height)
     {
@@ -221,7 +220,7 @@ class Object
      * Set data from nodes.
      *
      * @param Nodes $nodes
-     * @return \NTLAB\RtfTree\Document\Object
+     * @return \NTLAB\RtfTree\Document\DocObject
      */
     protected function setDataNodes(Nodes $nodes)
     {

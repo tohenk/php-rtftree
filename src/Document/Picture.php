@@ -27,9 +27,8 @@
 namespace NTLAB\RtfTree\Document;
 
 use NTLAB\RtfTree\Node\Node;
-use NTLAB\RtfTree\Document\Unit;
 
-class Picture extends Object
+class Picture extends DocObject
 {
     /**
      * @var int

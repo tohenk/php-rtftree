@@ -540,15 +540,15 @@ class Node extends Base
                 } else if ($this->isEquals('line')) {
                     $result->add("\r\n", $this);
                 } else if ($this->isEquals('lquote')) {
-                    $result->add(/*'‘'*/ Encoding::getChar(0x2018), $this);
+                    $result->add(/*'â€˜'*/ Encoding::getChar(0x2018), $this);
                 } else if ($this->isEquals('rquote')) {
-                    $result->add(/*'’'*/ Encoding::getChar(0x2019), $this);
+                    $result->add(/*'â€™'*/ Encoding::getChar(0x2019), $this);
                 } else if ($this->isEquals('ldblquote')) {
-                    $result->add(/*'“'*/ Encoding::getChar(0x201c), $this);
+                    $result->add(/*'â€œ'*/ Encoding::getChar(0x201c), $this);
                 } else if ($this->isEquals('rdblquote')) {
-                    $result->add(/*'”'*/ Encoding::getChar(0x201d), $this);
+                    $result->add(/*'â€'*/ Encoding::getChar(0x201d), $this);
                 } else if ($this->isEquals('emdash')) {
-                    $result->add(/*'—'*/ Encoding::getChar(0x2014), $this);
+                    $result->add(/*'â€”'*/ Encoding::getChar(0x2014), $this);
                 } else if ($this->isEquals('u')) {
                     $result->add($this->decode($this->parameter), $this);
                 }
@@ -1351,6 +1351,7 @@ class Node extends Base
     {
         // plain text found
         $text = $this->getPlainText();
+        $pos = null;
         if ($nodes = $text->find($from, $pos)) {
             // combine matched nodes as single text node
             if ($node = $this->combineNodesText($nodes, $pos)) {

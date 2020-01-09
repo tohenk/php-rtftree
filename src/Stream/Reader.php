@@ -231,9 +231,8 @@ class Reader
         if ($this->stream->available()) {
             if (mb_strlen($text = $this->stream->getRemain())) {
                 $pattern = sprintf('/^%s/', $pattern);
-                //echo "\nExpect: ".$pattern." from ".$text."\n";
+                $matches = null;
                 if (preg_match($pattern, $text, $matches)) {
-                    //echo "\nGot: ".$matches[0]."\n";
                     $expected = $matches[0];
                     $this->stream->next(mb_strlen($expected));
 
