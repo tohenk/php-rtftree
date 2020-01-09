@@ -13,7 +13,7 @@ class DocumentTest extends BaseTest
      */
     protected $document;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->document = new Document();
         $this->document->loadFromFile($this->getFixtureDir().'test-doc-01.rtf');

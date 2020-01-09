@@ -17,7 +17,7 @@ class SelectionTest extends BaseTest
      */
     protected $mgroup = null;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tree = new Tree();
         $this->tree->loadFromFile($this->getFixtureDir().'test-sel-01.rtf');

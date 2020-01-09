@@ -11,14 +11,10 @@ class ObjectTest extends BaseTest
      */
     protected $doc;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doc = new Document();
         $this->doc->loadFromFile($this->getFixtureDir().'test-obj-01.rtf');
-    }
-
-    public function testOutput()
-    {
         $this->saveOut($this->doc->getTree()->toStringEx(), 'obj-01.txt');
     }
 
