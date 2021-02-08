@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -68,7 +68,6 @@ class Reader
     public function read()
     {
         $this->eof = !$this->stream->read();
-
         return !$this->eof;
     }
 
@@ -199,7 +198,7 @@ class Reader
      */
     public function isChar($ch)
     {
-        return in_array($this->getChar(), is_array($ch) ? $ch : array($ch));
+        return in_array($this->getChar(), is_array($ch) ? $ch : [$ch]);
     }
 
     /**
@@ -216,7 +215,6 @@ class Reader
             }
             $this->stream->prev();
         }
-
         return false;
     }
 
@@ -235,7 +233,6 @@ class Reader
                 if (preg_match($pattern, $text, $matches)) {
                     $expected = $matches[0];
                     $this->stream->next(mb_strlen($expected));
-
                     return $expected;
                 }
             }

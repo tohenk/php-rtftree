@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -135,7 +135,7 @@ class Char
      */
     public static function isEscapable($ch)
     {
-        return in_array($ch, array(static::BLOCK_START, static::BLOCK_END, static::KEYWORD_MARKER));
+        return in_array($ch, [static::BLOCK_START, static::BLOCK_END, static::KEYWORD_MARKER]);
     }
 
     /**
@@ -146,7 +146,7 @@ class Char
      */
     public static function isHexEscapable($ch)
     {
-        return in_array($ch, array(static::HEX_MARKER));
+        return in_array($ch, [static::HEX_MARKER]);
     }
 
     /**
@@ -178,6 +178,6 @@ class Char
      */
     public static function getWhitespaces()
     {
-        return array("\0", "\t", "\r", "\n");
+        return ["\0", "\t", "\r", "\n"];
     }
 }

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -44,8 +44,8 @@ class EmbeddedObject extends DocObject
     {
         $this->readProp('objw', $this->width);
         $this->readProp('objh', $this->height);
-        $this->findChild(array('objemb', 'objlink', 'objautlink', 'objsub', 'objpub', 'objicemb',
-            'objhtml'), $this->type);
+        $this->findChild(['objemb', 'objlink', 'objautlink', 'objsub', 'objpub', 'objicemb',
+            'objhtml'], $this->type);
         if ($this->node) {
             // {\*\objclass Paint.Picture}
             if (($node = $this->node->selectSingleNode('objclass')) && ($nextSibling = $node->getNextSibling())) {
@@ -77,7 +77,6 @@ class EmbeddedObject extends DocObject
     public function setType($type)
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -100,7 +99,6 @@ class EmbeddedObject extends DocObject
     public function setClass($class)
     {
         $this->class = $class;
-
         return $this;
     }
 }

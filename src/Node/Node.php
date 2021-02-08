@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -74,21 +74,21 @@ class Node extends Base
     /**
      * @var array
      */
-    protected $caches = array();
+    protected $caches = [];
 
     /**
      * @var array
      */
-    protected static $specialGroups = array(
+    protected static $specialGroups = [
         'fonttbl', 'colortbl', 'stylesheet', 'listtable', 'listoverridetable',
         'rsidtbl', 'xmlnstbl', 'generator', 'info', 'pict', 'object', 'fldinst',
         'upr',
-    );
+    ];
 
     /**
      * @var array
      */
-    protected static $nodeTypes = array(
+    protected static $nodeTypes = [
         self::NONE        => '',
         self::ROOT        => 'Root',
         self::KEYWORD     => 'Keyword',
@@ -96,7 +96,7 @@ class Node extends Base
         self::TEXT        => 'Text',
         self::GROUP       => 'Group',
         self::WHITESPACE  => 'Whitespace',
-    );
+    ];
 
     /**
      * Register special groups.
@@ -105,7 +105,7 @@ class Node extends Base
      */
     public static function registerSpecialGroup($names)
     {
-        $names = is_array($names) ? $names : array($names);
+        $names = is_array($names) ? $names : [$names];
         foreach ($names as $name) {
             if (!in_array($name, static::$specialGroups)) {
                 static::$specialGroups[] = $name;
@@ -135,19 +135,15 @@ class Node extends Base
             case Token::NONE:
                 $node->type = static::NONE;
                 break;
-
             case Token::KEYWORD:
                 $node->type = static::KEYWORD;
                 break;
-
             case Token::CONTROL:
                 $node->type = static::CONTROL;
                 break;
-
             case Token::TEXT:
                 $node->type = static::TEXT;
                 break;
-
             case Token::WHITESPACE:
                 $node->type = static::WHITESPACE;
                 break;
@@ -155,7 +151,6 @@ class Node extends Base
         $node->key = $token->getKey();
         $node->hasParameter = $token->hasParameter();
         $node->parameter = $token->getParameter();
-
         return $node;
     }
 
@@ -169,7 +164,6 @@ class Node extends Base
     {
         $node = new self();
         $node->type = $type;
-
         return $node;
     }
 
@@ -188,7 +182,6 @@ class Node extends Base
         $node->key = $key;
         $node->hasParameter = $hasParameter;
         $node->parameter = $parameter;
-
         return $node;
     }
 
@@ -223,7 +216,6 @@ class Node extends Base
             }
             $i++;
         }
-
         return $text;
     }
 
@@ -294,7 +286,6 @@ class Node extends Base
                 }
                 throw new \Exception(sprintf('Unhandled char: "%s" at %d', $stream->getChar(), $stream->getPos()));
             }
-
             return $nodes;
         }
     }
@@ -323,7 +314,6 @@ class Node extends Base
                 $this->parent->addTime($time);
             }
         }
-
         return $this;
     }
 
@@ -356,7 +346,6 @@ class Node extends Base
     public function setParent(Node $value)
     {
         $this->parent = $value;
-
         return $this;
     }
 
@@ -370,7 +359,6 @@ class Node extends Base
         if ($this->parent) {
             return $this->parent->getRoot();
         }
-
         return $this;
     }
 
@@ -515,13 +503,11 @@ class Node extends Base
                     }
                 }
                 break;
-
             case static::CONTROL:
                 if ($this->key === Char::HEX_MARKER) {
                     $result->add($this->decode($this->parameter), $this);
                 }
                 break;
-
             case static::TEXT:
                 if (($prev = $this->getPreviousNode()) &&  $prev->is(static::KEYWORD) && $prev->isEquals('u')) {
                     if (strlen($this->key) - $ignoreNChars) {
@@ -531,7 +517,6 @@ class Node extends Base
                     $result->add($this->key, $this);
                 }
                 break;
-
             case static::KEYWORD:
                 if ($this->isEquals('par')) {
                     $result->add("\r\n", $this);
@@ -556,7 +541,6 @@ class Node extends Base
         }
         // cache it
         $this->caches[$textKind] = $result;
-
         return $result;
     }
 
@@ -605,7 +589,6 @@ class Node extends Base
                 return false;
             }
         }
-
         return true;
     }
 
@@ -627,7 +610,6 @@ class Node extends Base
                 }
             }
         }
-
         return $result;
     }
 
@@ -670,7 +652,6 @@ class Node extends Base
         }
         // cache it
         $this->caches[$cacheName] = $result;
-
         return $result;
     }
 
@@ -716,7 +697,6 @@ class Node extends Base
         }
         // cache it
         $this->caches[$cacheName] = $result;
-
         return $result;
     }
 
@@ -747,7 +727,6 @@ class Node extends Base
                 return true;
             }
         }
-
         return false;
     }
 
@@ -765,7 +744,6 @@ class Node extends Base
                 $result = false;
             }
         }
-
         return $result;
     }
 
@@ -803,7 +781,6 @@ class Node extends Base
             for ($i = $sIdx; $i <= $eIdx; $i++) {
                 $nodes[] = $this->children[$i];
             }
-
             return $nodes;
         }
     }
@@ -878,7 +855,6 @@ class Node extends Base
                 unset($nodes[1]);
             }
             $topNode->clearCache();
-
             return $topNode;
         }
     }
@@ -891,12 +867,11 @@ class Node extends Base
     protected function clearCache()
     {
         if (count($this->caches)) {
-            $this->caches = array();
+            $this->caches = [];
         }
         if ($this->parent) {
             $this->parent->clearCache();
         }
-
         return $this;
     }
 
@@ -913,7 +888,6 @@ class Node extends Base
             $this->children[] = $node;
             $this->clearCache();
         }
-
         return $this;
     }
 
@@ -930,7 +904,6 @@ class Node extends Base
                 $this->appendChild($node);
             }
         }
-
         return $this;
     }
 
@@ -946,7 +919,6 @@ class Node extends Base
         $node->parent = $this;
         $this->children->insert($index, $node);
         $this->clearCache();
-
         return $this;
     }
 
@@ -960,7 +932,6 @@ class Node extends Base
     {
         $this->children->remove($node);
         $this->clearCache();
-
         return $this;
     }
 
@@ -974,7 +945,6 @@ class Node extends Base
     {
         unset($this->children[$index]);
         $this->clearCache();
-
         return $this;
     }
 
@@ -1002,7 +972,6 @@ class Node extends Base
         foreach ($this->children as $child) {
             $node->appendChild($child->cloneNode());
         }
-
         return $node;
     }
 
@@ -1087,7 +1056,6 @@ class Node extends Base
             }
             $nodes->append($child->selectNodesTyped($type));
         }
-
         return $nodes;
     }
 
@@ -1107,7 +1075,6 @@ class Node extends Base
             }
             $nodes->append($child->selectNodes($key, $parameter));
         }
-
         return $nodes;
     }
 
@@ -1127,7 +1094,6 @@ class Node extends Base
             }
             $nodes->append($child->selectGroup($key, $ignoreSpecial));
         }
-
         return $nodes;
     }
 
@@ -1192,7 +1158,6 @@ class Node extends Base
                 $nodes[] = $child;
             }
         }
-
         return $nodes;
     }
 
@@ -1211,7 +1176,6 @@ class Node extends Base
                 $nodes[] = $child;
             }
         }
-
         return $nodes;
     }
 
@@ -1230,7 +1194,6 @@ class Node extends Base
                 $nodes[] = $child;
             }
         }
-
         return $nodes;
     }
 
@@ -1315,7 +1278,6 @@ class Node extends Base
             }
             $nodes->append($child->findText($text));
         }
-
         return $nodes;
     }
 
@@ -1336,7 +1298,6 @@ class Node extends Base
             }
             $count += $child->replaceText($oldValue, $newValue);
         }
-
         return $count;
     }
 
@@ -1379,11 +1340,9 @@ class Node extends Base
                     $node->setKey($replacement);
                 }
                 $node->clearCache();
-
                 return true;
             }
         }
-
         return false;
     }
 
@@ -1395,7 +1354,6 @@ class Node extends Base
     public function clear()
     {
         $this->children->clear();
-
         return $this;
     }
 
@@ -1435,15 +1393,12 @@ class Node extends Base
             case static::ROOT:
                 $result .= 'ROOT';
                 break;
-
             case static::GROUP:
                 $result .= 'GROUP';
                 break;
-
             case static::WHITESPACE:
                 $result .= 'WHITESPACE';
                 break;
-
             default:
                 if (($flag & static::TREE_NODE_TYPE) == static::TREE_NODE_TYPE) {
                     $result .= $this->getTypeText().': ';
@@ -1464,7 +1419,6 @@ class Node extends Base
         foreach ($this->children as $child) {
             $result .= $child->asTree($level + 1, $flag);
         }
-
         return $result;
     }
 }

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -85,7 +85,6 @@ abstract class Base
     public function setType($value)
     {
         $this->type = $value;
-
         return $this;
     }
 
@@ -108,7 +107,6 @@ abstract class Base
     public function setKey($value)
     {
         $this->key = $value;
-
         return $this;
     }
 
@@ -141,7 +139,6 @@ abstract class Base
     public function setHasParameter($value)
     {
         $this->hasParameter = (bool) $value;
-
         return $this;
     }
 
@@ -164,7 +161,6 @@ abstract class Base
     public function setParameter($value)
     {
         $this->parameter = $value;
-
         return $this;
     }
 
@@ -176,13 +172,12 @@ abstract class Base
      */
     public function isEquals($keys)
     {
-        $keys = is_array($keys) ? $keys : array($keys);
+        $keys = is_array($keys) ? $keys : [$keys];
         foreach ($keys as $key) {
             if (strtolower($this->key) === strtolower($key)) {
                 return true;
             }
         }
-
         return false;
     }
 

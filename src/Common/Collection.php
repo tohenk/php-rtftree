@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -31,7 +31,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
     /**
      * @var array
      */
-    protected $items = array();
+    protected $items = [];
 
     /**
      * Always maintain key to be ordered.
@@ -64,7 +64,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
         if ($this->reorder) {
             $this->items = array_values($this->items);
         }
-
         return $this;
     }
 
@@ -78,8 +77,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
         while (count($this->items)) {
             unset($this->items[0]);
         }
-        $this->items = array();
-
+        $this->items = [];
         return $this;
     }
 
@@ -95,7 +93,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
             $this->checkItem($value);
             $this->items[] = $value;
         }
-
         return $this;
     }
 
@@ -112,7 +109,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
                 $this->add($item);
             }
         }
-
         return $this;
     }
 
@@ -126,20 +122,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
     public function insert($index, $value)
     {
         $this->checkItem($value);
-
         // index is out of bound, appended
         if (empty($this->items) || $index < 0 || $index >= count($this->items)) {
             $this->items[] = $value;
         } else if (0 == $index) {
-            $this->items = array_merge(array($value), $this->items);
+            $this->items = array_merge([$value], $this->items);
             $this->maintain();
         } else {
             $first = array_slice($this->items, 0, $index);
             $last = array_slice($this->items, $index);
-            $this->items = array_merge($first, array($value), $last);
+            $this->items = array_merge($first, [$value], $last);
             $this->maintain();
         }
-
         return $this;
     }
 
@@ -154,10 +148,8 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
         if (false !== ($index = $this->indexOf($value))) {
             unset($this->items[$index]);
             $this->maintain();
-
             return true;
         }
-
         return false;
     }
 
@@ -178,7 +170,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
             }
         }
         $this->maintain();
-
         return $count;
     }
 
@@ -192,7 +183,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         if (null !== $value)
         {
-            for ($i = max(array($startIndex, 0)); $i < count($this->items); $i++) {
+            for ($i = max([$startIndex, 0]); $i < count($this->items); $i++) {
                 if ($this->items[$i] === $value) {
                     return $i;
                 }
@@ -268,7 +259,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
     public function offsetSet($offset, $value)
     {
         $this->checkItem($value);
-
         if (null === $offset) {
             $this->items[] = $value;
         } else {

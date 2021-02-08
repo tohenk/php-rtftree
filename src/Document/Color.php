@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -246,7 +246,6 @@ class Color
     public function setValue($value)
     {
         $this->value = $value;
-
         return $this;
     }
 
@@ -269,7 +268,6 @@ class Color
     public function setR($value)
     {
         $this->R($this->value, $value);
-
         return $this;
     }
 
@@ -292,7 +290,6 @@ class Color
     public function setG($value)
     {
         $this->G($this->value, $value);
-
         return $this;
     }
 
@@ -315,7 +312,6 @@ class Color
     public function setB($value)
     {
         $this->B($this->value, $value);
-
         return $this;
     }
 
@@ -328,7 +324,6 @@ class Color
     public function assign(Color $color)
     {
         $this->value = $color->value;
-
         return $this;
     }
 

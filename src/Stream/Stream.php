@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -81,7 +81,6 @@ class Stream
         if ($content instanceof self) {
             return $content;
         }
-
         return new self($content);
     }
 
@@ -112,10 +111,8 @@ class Stream
             if ($advance) {
                 $this->pos++;
             }
-
             return true;
         }
-
         return false;
     }
 
@@ -125,16 +122,15 @@ class Stream
      * @param array $chars  Characters to match
      * @return boolean
      */
-    public function skip($chars = array())
+    public function skip($chars = [])
     {
-        $chars = is_array($chars) ? $chars : array($chars);
+        $chars = is_array($chars) ? $chars : [$chars];
         if ($this->read()) {
             if (in_array($this->ch, $chars)) {
                 return true;
             }
             $this->pos--;
         }
-
         return false;
     }
 
@@ -168,7 +164,6 @@ class Stream
     {
         $this->pos += $delta;
         $this->remain = null;
-
         return $this->pos;
     }
 
@@ -182,7 +177,6 @@ class Stream
     {
         $this->pos -= $delta;
         $this->remain = null;
-
         return $this->pos;
     }
 
@@ -204,8 +198,7 @@ class Stream
      */
     public function is($chars)
     {
-        $chars = is_array($chars) ? $chars : array($chars);
-
+        $chars = is_array($chars) ? $chars : [$chars];
         return in_array($this->ch, $chars);
     }
 
@@ -234,7 +227,6 @@ class Stream
                 break;
             }
         }
-
         return $result;
     }
 
@@ -259,7 +251,6 @@ class Stream
             if (null == $this->remain) {
                 $this->remain = mb_substr($this->content, $this->pos, null, $this->encoding);
             }
-
             return $this->remain;
         }
     }

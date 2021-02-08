@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -149,7 +149,6 @@ class Stylesheet
     public function setIndex($index)
     {
         $this->index = $index;
-
         return $this;
     }
 
@@ -172,7 +171,6 @@ class Stylesheet
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -195,7 +193,6 @@ class Stylesheet
     public function setType($type)
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -218,7 +215,6 @@ class Stylesheet
     public function setAdditive($additive)
     {
         $this->additive = $additive;
-
         return $this;
     }
 
@@ -241,7 +237,6 @@ class Stylesheet
     public function setBasedOn($basedOn)
     {
         $this->basedOn = $basedOn;
-
         return $this;
     }
 
@@ -264,7 +259,6 @@ class Stylesheet
     public function setNext($next)
     {
         $this->next = $next;
-
         return $this;
     }
 
@@ -287,7 +281,6 @@ class Stylesheet
     public function setAutoUpdate($autoUpdate)
     {
         $this->autoUpdate = $autoUpdate;
-
         return $this;
     }
 
@@ -310,7 +303,6 @@ class Stylesheet
     public function setHidden($hidden)
     {
         $this->hidden = $hidden;
-
         return $this;
     }
 
@@ -333,7 +325,6 @@ class Stylesheet
     public function setLink($link)
     {
         $this->link = $link;
-
         return $this;
     }
 
@@ -356,7 +347,6 @@ class Stylesheet
     public function setLocked($locked)
     {
         $this->locked = $locked;
-
         return $this;
     }
 
@@ -379,7 +369,6 @@ class Stylesheet
     public function setPersonal($personal)
     {
         $this->personal = $personal;
-
         return $this;
     }
 
@@ -402,7 +391,6 @@ class Stylesheet
     public function setCompose($compose)
     {
         $this->compose = $compose;
-
         return $this;
     }
 
@@ -425,7 +413,6 @@ class Stylesheet
     public function setReply($reply)
     {
         $this->reply = $reply;
-
         return $this;
     }
 
@@ -448,7 +435,6 @@ class Stylesheet
     public function setStyrsid($styrsid)
     {
         $this->styrsid = $styrsid;
-
         return $this;
     }
 
@@ -471,7 +457,6 @@ class Stylesheet
     public function setSemiHidden($semiHidden)
     {
         $this->semiHidden = $semiHidden;
-
         return $this;
     }
 

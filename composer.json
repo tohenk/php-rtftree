@@ -1,5 +1,5 @@
 {
-	"name" : "ntlab/rtf-tree",
+	"name" : "ntlab/rtftree",
 	"type" : "library",
 	"description" : "PHP Library for RTF processing",
 	"keywords" : [
@@ -8,7 +8,7 @@
 		"parser",
 		"text processing"
 	],
-	"homepage" : "https://github.com/tohenk/php-rtf-tree",
+	"homepage" : "https://github.com/tohenk/php-rtftree",
 	"license" : "MIT",
 	"authors" : [{
 			"name" : "Toha",
@@ -17,10 +17,10 @@
 		}
 	],
 	"require" : {
-		"php" : "^7.1 || ^8.0"
+		"php" : ">=7.1"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "^8.5"
+		"phpunit/phpunit" : "^9.5"
 	},
 	"autoload" : {
 		"psr-4" : {
@@ -28,6 +28,6 @@
 		}
 	},
 	"bin" : [
-		"bin/rtf-tree-dump"
+		"bin/rtftree-dump"
 	]
 }

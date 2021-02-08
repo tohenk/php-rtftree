@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -90,7 +90,6 @@ class Font
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -112,7 +111,6 @@ class Font
     public function setColor($color)
     {
         $this->color->setValue($color);
-
         return $this;
     }
 
@@ -135,7 +133,6 @@ class Font
     public function setSize($size)
     {
         $this->size = $size;
-
         return $this;
     }
 
@@ -158,7 +155,6 @@ class Font
     public function setBold($bold)
     {
         $this->bold = $bold;
-
         return $this;
     }
 
@@ -181,7 +177,6 @@ class Font
     public function setItalic($italic)
     {
         $this->italic = $italic;
-
         return $this;
     }
 
@@ -204,7 +199,6 @@ class Font
     public function setUnderline($underline)
     {
         $this->underline = $underline;
-
         return $this;
     }
 
@@ -227,7 +221,6 @@ class Font
     public function setStrikethrough($strikethrough)
     {
         $this->strikethrough = $strikethrough;
-
         return $this;
     }
 
@@ -239,7 +232,7 @@ class Font
      */
     public function assign(Font $font)
     {
-        foreach (array('name', 'color', 'size', 'bold', 'italic', 'underline', 'strikethrough') as $var) {
+        foreach (['name', 'color', 'size', 'bold', 'italic', 'underline', 'strikethrough'] as $var) {
             $value = $font->$var;
             if (is_object($value)) {
                 $this->$var->assign($value);
@@ -247,7 +240,6 @@ class Font
                 $this->$var = $value;
             }
         }
-
         return $this;
     }
 }

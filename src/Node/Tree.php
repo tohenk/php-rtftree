@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -125,7 +125,6 @@ class Tree
     public function setMergeSpecial($value)
     {
         $this->mergeSpecial = (bool) $value;
-
         return $this;
     }
 
@@ -148,7 +147,6 @@ class Tree
     public function setIgnoreWhitespace($value)
     {
         $this->ignoreWhitespace = (bool) $value;
-
         return $this;
     }
 
@@ -171,7 +169,6 @@ class Tree
     public function setIgnoreMalformed($value)
     {
         $this->ignoreMalformed = (bool) $value;
-
         return $this;
     }
 
@@ -185,7 +182,6 @@ class Tree
         if (!$this->root->hasChildNodes()) {
             $this->root->appendChild(Node::createTyped(Node::GROUP));
         }
-
         return $this;
     }
 
@@ -202,7 +198,6 @@ class Tree
                 $result .= $firstChild->getChildAt($i)->getPlainText();
             }
         }
-
         return $result;
     }
 
@@ -229,7 +224,6 @@ class Tree
         foreach ($this->root->getChildren() as $child) {
             $tree->root->appendChild($child->cloneNode());
         }
-
         return $tree;
     }
 
@@ -255,10 +249,8 @@ class Tree
             $token->setType(Token::TEXT);
             $token->setKey(Node::decode($token->getParameter()));
             $token->setHasParameter(false);
-
             return true;
         }
-
         return false;
     }
 
@@ -290,11 +282,9 @@ class Tree
                 }
                 $this->forceTokenAsText($token);
                 $cnode->setKey($cnode->getKey().$token->getKey());
-
                 return true;
             }
         }
-
         return false;
     }
 
@@ -332,12 +322,10 @@ class Tree
                     $node = $nextNode;
                     $this->level++;
                     break;
-
                 case Token::GROUP_END:
                     $node = $node->getParent();
                     $this->level--;
                     break;
-
                 case Token::KEYWORD:
                 case Token::CONTROL:
                 case Token::TEXT:
@@ -359,7 +347,6 @@ class Tree
                         $node->addTime($time);
                     }
                     break;
-
                 case Token::WHITESPACE:
                     if (!$this->ignoreWhitespace) {
                         $nextNode = Node::createFromToken($token);
@@ -367,7 +354,6 @@ class Tree
                         $nextNode->addTime($time);
                     }
                     break;
-
                 default:
                     $skip++;
                     break;
@@ -377,7 +363,6 @@ class Tree
         if ($this->level > 0) {
             return false;
         }
-
         return $skip;
     }
 
@@ -398,10 +383,8 @@ class Tree
         $start = microtime(true);
         if (0 === $this->parse()) {
             $this->parseTime = microtime(true) - $start;
-
             return true;
         }
-
         return false;
     }
 
@@ -416,7 +399,6 @@ class Tree
         if (is_readable($filename)) {
             return $this->loadFromStream(Stream::create(file_get_contents($filename)));
         }
-
         return false;
     }
 
@@ -431,7 +413,6 @@ class Tree
         if (strlen($content)) {
             return $this->loadFromStream(Stream::create($content));
         }
-
         return false;
     }
 

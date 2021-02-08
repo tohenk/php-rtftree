@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -157,7 +157,6 @@ class DocumentProperty
     public function setId($id)
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -180,7 +179,6 @@ class DocumentProperty
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -203,7 +201,6 @@ class DocumentProperty
     public function setSubject($subject)
     {
         $this->subject = $subject;
-
         return $this;
     }
 
@@ -226,7 +223,6 @@ class DocumentProperty
     public function setAuthor($author)
     {
         $this->author = $author;
-
         return $this;
     }
 
@@ -249,7 +245,6 @@ class DocumentProperty
     public function setManager($manager)
     {
         $this->manager = $manager;
-
         return $this;
     }
 
@@ -272,7 +267,6 @@ class DocumentProperty
     public function setCompany($company)
     {
         $this->company = $company;
-
         return $this;
     }
 
@@ -295,7 +289,6 @@ class DocumentProperty
     public function setOperator($operator)
     {
         $this->operator = $operator;
-
         return $this;
     }
 
@@ -318,7 +311,6 @@ class DocumentProperty
     public function setCategory($category)
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -341,7 +333,6 @@ class DocumentProperty
     public function setKeywords($keywords)
     {
         $this->keywords = $keywords;
-
         return $this;
     }
 
@@ -364,7 +355,6 @@ class DocumentProperty
     public function setComment($comment)
     {
         $this->comment = $comment;
-
         return $this;
     }
 
@@ -387,7 +377,6 @@ class DocumentProperty
     public function setDocComment($docComment)
     {
         $this->docComment = $docComment;
-
         return $this;
     }
 
@@ -410,7 +399,6 @@ class DocumentProperty
     public function setHyperlinkBase($hyperlinkBase)
     {
         $this->hyperlinkBase = $hyperlinkBase;
-
         return $this;
     }
 
@@ -433,7 +421,6 @@ class DocumentProperty
     public function setCreateTime($createTime)
     {
         $this->createTime = $createTime;
-
         return $this;
     }
 
@@ -456,7 +443,6 @@ class DocumentProperty
     public function setRevisionTime($revisionTime)
     {
         $this->revisionTime = $revisionTime;
-
         return $this;
     }
 
@@ -479,7 +465,6 @@ class DocumentProperty
     public function setPrintTime($printTime)
     {
         $this->printTime = $printTime;
-
         return $this;
     }
 
@@ -502,7 +487,6 @@ class DocumentProperty
     public function setBackupTime($backupTime)
     {
         $this->backupTime = $backupTime;
-
         return $this;
     }
 
@@ -525,7 +509,6 @@ class DocumentProperty
     public function setVersion($version)
     {
         $this->version = $version;
-
         return $this;
     }
 
@@ -548,7 +531,6 @@ class DocumentProperty
     public function setVersionInternal($versionInternal)
     {
         $this->versionInternal = $versionInternal;
-
         return $this;
     }
 
@@ -571,7 +553,6 @@ class DocumentProperty
     public function setEditingTime($editingTime)
     {
         $this->editingTime = $editingTime;
-
         return $this;
     }
 
@@ -594,7 +575,6 @@ class DocumentProperty
     public function setNumOfPages($numOfPages)
     {
         $this->numOfPages = $numOfPages;
-
         return $this;
     }
 
@@ -617,7 +597,6 @@ class DocumentProperty
     public function setNumOfWords($numOfWords)
     {
         $this->numOfWords = $numOfWords;
-
         return $this;
     }
 
@@ -640,7 +619,6 @@ class DocumentProperty
     public function setNumOfChars($numOfChars)
     {
         $this->numOfChars = $numOfChars;
-
         return $this;
     }
 
@@ -651,14 +629,13 @@ class DocumentProperty
      */
     public function clear()
     {
-        foreach (array('id', 'title', 'subject', 'author', 'manager',
+        foreach (['id', 'title', 'subject', 'author', 'manager',
             'company', 'operator', 'category', 'keywords', 'comment',
             'docComment', 'hyperlinkBase', 'createTime', 'revisionTime',
             'printTime', 'backupTime', 'version', 'versionInternal',
-            'editingTime', 'numOfPages', 'numOfWords', 'numOfChars') as $var) {
+            'editingTime', 'numOfPages', 'numOfWords', 'numOfChars'] as $var) {
             $this->$var = null;
         }
-
         return $this;
     }
 }

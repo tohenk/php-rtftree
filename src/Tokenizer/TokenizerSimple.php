@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -46,7 +46,6 @@ class TokenizerSimple extends Tokenizer
     protected function prev()
     {
         $this->reader->getStream()->prev();
-
         return $this;
     }
 
@@ -57,7 +56,6 @@ class TokenizerSimple extends Tokenizer
     protected function next()
     {
         $this->reader->getStream()->next();
-
         return $this;
     }
 
@@ -81,7 +79,6 @@ class TokenizerSimple extends Tokenizer
         }
         $token->setType(Token::WHITESPACE);
         $token->setKey($key);
-
         return $this;
     }
 
@@ -146,7 +143,6 @@ class TokenizerSimple extends Tokenizer
                 $token->setParameter((int) $parameter);
             }
         }
-
         return $this;
     }
 
@@ -170,7 +166,6 @@ class TokenizerSimple extends Tokenizer
         }
         $token->setType(Token::TEXT);
         $token->setKey($key);
-
         return $this;
     }
 
@@ -196,7 +191,6 @@ class TokenizerSimple extends Tokenizer
         } else {
             $this->parseText($token);
         }
-
         return $token;
     }
 }

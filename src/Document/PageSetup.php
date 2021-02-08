@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -93,7 +93,6 @@ class PageSetup
     public function setWidth($width)
     {
         $this->width = $width;
-
         return $this;
     }
 
@@ -117,7 +116,6 @@ class PageSetup
     public function setHeight($height)
     {
         $this->height = $height;
-
         return $this;
     }
 
@@ -141,7 +139,6 @@ class PageSetup
     public function setMarginTop($marginTop)
     {
         $this->marginTop = $marginTop;
-
         return $this;
     }
 
@@ -165,7 +162,6 @@ class PageSetup
     public function setMarginBottom($marginBottom)
     {
         $this->marginBottom = $marginBottom;
-
         return $this;
     }
 
@@ -189,7 +185,6 @@ class PageSetup
     public function setMarginLeft($marginLeft)
     {
         $this->marginLeft = $marginLeft;
-
         return $this;
     }
 
@@ -213,7 +208,6 @@ class PageSetup
     public function setMarginRight($marginRight)
     {
         $this->marginRight = $marginRight;
-
         return $this;
     }
 
@@ -224,10 +218,9 @@ class PageSetup
      */
     public function clear()
     {
-        foreach (array('width', 'height', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight') as $var) {
+        foreach (['width', 'height', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight'] as $var) {
             $this->$var = null;
         }
-
         return $this;
     }
 }

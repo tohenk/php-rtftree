@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -71,7 +71,6 @@ class ColorTable
         $nodes[] = Node::create(Node::KEYWORD, 'green', true, $this->color->getG());
         $nodes[] = Node::create(Node::KEYWORD, 'blue', true, $this->color->getB());
         $nodes[] = Node::create(Node::TEXT, ';');
-
         return $nodes;
     }
 
@@ -83,9 +82,9 @@ class ColorTable
      */
     public static function extract(Node $node)
     {
-        $colors = array();
+        $colors = [];
         $color = 0;
-        $nodes = array();
+        $nodes = [];
         foreach ($node->getChildren() as $child) {
             if ($child->is(Node::KEYWORD)) {
                 if ($child->isEquals('red')) {
@@ -104,13 +103,12 @@ class ColorTable
             }
             if ($child->isEquals(';')) {
                 $nodes[] = $child;
-                $colors[] = array($color, $nodes);
+                $colors[] = [$color, $nodes];
                 $color = 0;
-                $nodes = array();
+                $nodes = [];
                 continue;
             }
         }
-
         return $colors;
     }
 }

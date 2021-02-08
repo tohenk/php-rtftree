@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -235,7 +235,6 @@ class Document
     public function setCodepage($codepage)
     {
         $this->codepage = $codepage;
-
         return $this;
     }
 
@@ -258,7 +257,6 @@ class Document
     public function setLcid($lcid)
     {
         $this->lcid = $lcid;
-
         return $this;
     }
 
@@ -281,7 +279,6 @@ class Document
     public function setGenerator($generator)
     {
         $this->generator = $generator;
-
         return $this;
     }
 
@@ -304,7 +301,6 @@ class Document
     public function setViewkind($viewkind)
     {
         $this->viewkind = $viewkind;
-
         return $this;
     }
 
@@ -327,7 +323,6 @@ class Document
     public function setViewscale($viewscale)
     {
         $this->viewscale = $viewscale;
-
         return $this;
     }
 
@@ -348,7 +343,6 @@ class Document
         $this->codepage = null;
         $this->lcid = null;
         $this->generator = null;
-
         return $this;
     }
 
@@ -374,7 +368,6 @@ class Document
         if ($node = $this->tree->getRoot()->selectSingleNode('viewscale')) {
             $this->viewscale = $node->getParameter();
         }
-
         return $this;
     }
 
@@ -403,7 +396,6 @@ class Document
         if ($node = $this->tree->getRoot()->selectSingleNode('margr')) {
             $this->pageSetup->setMarginRight($node->getParameter());
         }
-
         return $this;
     }
 
@@ -416,7 +408,7 @@ class Document
     {
         if ($this->tree->getRoot()->selectSingleNode('info')) {
             // string property
-            foreach (array('title', 'subject', 'author', 'manager', 'company', 'operator', 'category', 'keywords', 'comment', 'doccomm' => 'docComment', 'hlinkbase' => 'hyperlinkBase') as $k => $v) {
+            foreach (['title', 'subject', 'author', 'manager', 'company', 'operator', 'category', 'keywords', 'comment', 'doccomm' => 'docComment', 'hlinkbase' => 'hyperlinkBase'] as $k => $v) {
                 $method = 'set'.ucfirst($v);
                 $value = null;
                 if ($node = $this->tree->getRoot()->selectSingleNode(is_int($k) ? $v : $k)) {
@@ -425,7 +417,7 @@ class Document
                 $this->documentProperty->$method($value);
             }
             // integer property
-            foreach (array('id', 'version', 'vern' => 'versionInternal', 'edmins' => 'editingTime', 'nofpages' => 'numOfPages', 'nofwords' => 'numOfWords', 'nofchars' => 'numOfChars') as $k => $v) {
+            foreach (['id', 'version', 'vern' => 'versionInternal', 'edmins' => 'editingTime', 'nofpages' => 'numOfPages', 'nofwords' => 'numOfWords', 'nofchars' => 'numOfChars'] as $k => $v) {
                 $method = 'set'.ucfirst($v);
                 $value = null;
                 if ($node = $this->tree->getRoot()->selectSingleNode(is_int($k) ? $v : $k)) {
@@ -434,7 +426,7 @@ class Document
                 $this->documentProperty->$method($value);
             }
             // date time property
-            foreach (array('creatim' => 'createTime', 'revtim' => 'revisionTime', 'printim' => 'printTime', 'buptim' => 'backupTime') as $k => $v) {
+            foreach (['creatim' => 'createTime', 'revtim' => 'revisionTime', 'printim' => 'printTime', 'buptim' => 'backupTime'] as $k => $v) {
                 $method = 'set'.ucfirst($v);
                 $value = null;
                 if ($node = $this->tree->getRoot()->selectSingleNode(is_int($k) ? $v : $k)) {
@@ -443,7 +435,6 @@ class Document
                 $this->documentProperty->$method($value);
             }
         }
-
         return $this;
     }
 
@@ -465,7 +456,6 @@ class Document
                 $this->fontTables[] = FontTable::create($fInfo);
             }
         }
-
         return $this;
     }
 
@@ -481,7 +471,6 @@ class Document
                 $this->colorTables[] = new ColorTable($color[0]);
             }
         }
-
         return $this;
     }
 
@@ -501,7 +490,6 @@ class Document
                 $this->stylesheets[] = $this->parseStyleSheet($child);
             }
         }
-
         return $this;
     }
 
@@ -513,7 +501,7 @@ class Document
      */
     protected function parseDateTime(Node $node)
     {
-        $date = array('yr' => 0, 'mo' => 0, 'dy' => 0, 'hr' => 0, 'min' => 0, 'sec' => 0);
+        $date = ['yr' => 0, 'mo' => 0, 'dy' => 0, 'hr' => 0, 'min' => 0, 'sec' => 0];
         foreach ($node->getChildren() as $child) {
             if (array_key_exists($child->getKey(), $date)) {
                 $date[$child->getKey()] = $child->getParameter();
@@ -522,7 +510,6 @@ class Document
         if (false !== ($time = mktime($date['hr'], $date['min'], $date['sec'], $date['mo'], $date['dy'], $date['yr']))) {
             $dt = new \DateTime();
             $dt->setTimestamp($time);
-
             return $dt;
         }
     }
@@ -538,7 +525,7 @@ class Document
         $stylesheet = new Stylesheet();
         foreach ($node->getChildren() as $cnode) {
             // stylesheet type
-            foreach (array('cs' => Stylesheet::CHARACTER, 's' => Stylesheet::PARAGRAPH, 'ds' => Stylesheet::SECTION, 'ts' => Stylesheet::TABLE) as $k => $v) {
+            foreach (['cs' => Stylesheet::CHARACTER, 's' => Stylesheet::PARAGRAPH, 'ds' => Stylesheet::SECTION, 'ts' => Stylesheet::TABLE] as $k => $v) {
                 if ($cnode->isEquals($k)) {
                     $stylesheet->setType($v);
                     $stylesheet->setIndex($cnode->getParameter());
@@ -546,7 +533,7 @@ class Document
                 }
             }
             // boolean property
-            foreach (array('additive', 'sautoupd' => 'autoUpdate', 'shidden' => 'hidden', 'slocked' => 'locked', 'spersonal' => 'personal', 'scompose' => 'compose', 'sreply' => 'reply', 'ssemihidden' => 'semiHidden') as $k => $v) {
+            foreach (['additive', 'sautoupd' => 'autoUpdate', 'shidden' => 'hidden', 'slocked' => 'locked', 'spersonal' => 'personal', 'scompose' => 'compose', 'sreply' => 'reply', 'ssemihidden' => 'semiHidden'] as $k => $v) {
                 if ($cnode->isEquals(is_int($k) ? $v : $k)) {
                     $method = 'set'.ucfirst($v);
                     $stylesheet->$method(true);
@@ -554,7 +541,7 @@ class Document
                 }
             }
             // integer property
-            foreach (array('sbasedon' => 'basedOn', 'snext' => 'next', 'slink' => 'link', 'styrsid') as $k => $v) {
+            foreach (['sbasedon' => 'basedOn', 'snext' => 'next', 'slink' => 'link', 'styrsid'] as $k => $v) {
                 if ($cnode->isEquals(is_int($k) ? $v : $k)) {
                     $method = 'set'.ucfirst($v);
                     $stylesheet->$method($cnode->getParameter());
@@ -579,7 +566,6 @@ class Document
                 continue;
             }
         }
-
         return $stylesheet;
     }
 
@@ -602,7 +588,6 @@ class Document
                 $this->pictures[] = new Picture($picNode);
             }
         }
-
         return $this;
     }
 
@@ -626,7 +611,6 @@ class Document
                 ->parseObjects()
             ;
         }
-
         return $loaded;
     }
 
@@ -641,7 +625,6 @@ class Document
         if (is_readable($filename)) {
             return $this->loadFromStream(Stream::create(file_get_contents($filename)));
         }
-
         return false;
     }
 
@@ -656,7 +639,6 @@ class Document
         if (strlen($content)) {
             return $this->loadFromStream(Stream::create($content));
         }
-
         return false;
     }
 }

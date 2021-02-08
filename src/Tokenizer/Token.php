@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -56,7 +56,7 @@ class Token extends Base
     /**
      * @var array
      */
-    protected static $tokenTypes = array(
+    protected static $tokenTypes = [
         self::NONE          => 'NONE',
         self::KEYWORD       => 'KEYWORD',
         self::CONTROL       => 'CONTROL',
@@ -64,7 +64,7 @@ class Token extends Base
         self::GROUP_START   => 'GROUP_START',
         self::GROUP_END     => 'GROUP_END',
         self::WHITESPACE    => 'WHITESPACE',
-    );
+    ];
 
     /**
      * Constructor.

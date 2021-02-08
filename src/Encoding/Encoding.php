@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -42,7 +42,6 @@ class Encoding
         if (null === self::$instance) {
             self::$instance = new self();
         }
-
         return self::$instance;
     }
 
@@ -54,7 +53,7 @@ class Encoding
      */
     public static function getCode($char)
     {
-        if (count($codes = explode(' ', trim(strtr(json_encode($char), array('"' => '', '\u' => ' ')))))) {
+        if (count($codes = explode(' ', trim(strtr(json_encode($char), ['"' => '', '\u' => ' ']))))) {
             return hexdec($codes[0]);
         }
     }
@@ -68,7 +67,6 @@ class Encoding
     public static function getChar($code)
     {
         $char = json_decode(sprintf('"\u%s"', HexUtil::toHex($code, 4)));
-
         return $char;
     }
 

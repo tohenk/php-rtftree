@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -52,7 +52,7 @@ class FontTable
     /**
      * @var array
      */
-    protected $families = array();
+    protected $families = [];
 
     /**
      * @var int
@@ -95,7 +95,6 @@ class FontTable
     public function setIndex($index)
     {
         $this->index = $index;
-
         return $this;
     }
 
@@ -118,7 +117,6 @@ class FontTable
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -143,7 +141,6 @@ class FontTable
         if (!in_array($family, $this->families)) {
             $this->families[] = $family;
         }
-
         return $this;
     }
 
@@ -166,7 +163,6 @@ class FontTable
     public function setCharset($charset)
     {
         $this->charset = $charset;
-
         return $this;
     }
 
@@ -189,7 +185,6 @@ class FontTable
     public function setPitch($pitch)
     {
         $this->pitch = $pitch;
-
         return $this;
     }
 
@@ -202,7 +197,7 @@ class FontTable
     {
         $node = Node::createTyped(Node::GROUP);
         $node->appendChild(Node::create(Node::KEYWORD, 'f', true, $this->index));
-        foreach (count($this->families) ? $this->families : array(static::FONT_FAM_NIL) as $family) {
+        foreach (count($this->families) ? $this->families : [static::FONT_FAM_NIL] as $family) {
             $node->appendChild(Node::create(Node::KEYWORD, 'f'.$family));
         }
         if (null !== $this->charset) {
@@ -212,7 +207,6 @@ class FontTable
             $node->appendChild(Node::create(Node::KEYWORD, 'fprq', true, $this->pitch));
         }
         $node->appendChild(Node::create(Node::TEXT, $this->name.';'));
-
         return $node;
     }
 
@@ -223,19 +217,18 @@ class FontTable
      */
     public function detectFamilies()
     {
-        foreach (array(
+        foreach ([
             'times new roman'   => static::FONT_FAM_ROMAN,
             'arial'             => static::FONT_FAM_SWISS,
             'courier new'       => static::FONT_FAM_MODERN,
             'cursiva'           => static::FONT_FAM_SCRIPT,
             'symbol'            => static::FONT_FAM_TECH,
             'arabic'            => static::FONT_FAM_BIDI,
-        ) as $font => $fam) {
+        ] as $font => $fam) {
             if (false !== strpos(strtolower($this->name), $font)) {
                 $this->addFamily($fam);
             }
         }
-
         return $this;
     }
 
@@ -245,7 +238,7 @@ class FontTable
      * @param array $array  Font table descriptor
      * @return \NTLAB\RtfTree\Document\FontTable
      */
-    public static function create($array = array())
+    public static function create($array = [])
     {
         if (is_array($array) && count($array) > 1) {
             $fontTable = new self($array[0], $array[1]);
@@ -263,7 +256,6 @@ class FontTable
             if (count($array) > 4 && null !== $array[4]) {
                 $fontTable->setPitch($array[4]);
             }
-
             return $fontTable;
         }
     }
@@ -300,7 +292,7 @@ class FontTable
                     }
                 } else {
                     if (null === $fFamilies) {
-                        $fFamilies = array();
+                        $fFamilies = [];
                     }
                     if (!in_array($fType, $fFamilies)) {
                         $fFamilies[] = $fType;
@@ -314,7 +306,7 @@ class FontTable
             }
         }
         if (null !== $fName) {
-            return array($fIndex, $fName, $fFamilies, $fCharset, $fPitch);
+            return [$fIndex, $fName, $fFamilies, $fCharset, $fPitch];
         }
     }
 }

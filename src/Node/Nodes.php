@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -48,7 +48,7 @@ class Nodes extends Collection
      */
     public function getIndex($key, $startIndex = 0)
     {
-        for ($i = max(array(0, $startIndex)); $i < count($this->items); $i++) {
+        for ($i = max([0, $startIndex]); $i < count($this->items); $i++) {
             $node = $this->items[$i];
             if ($node instanceof Node && $node->isEquals($key)) {
                 return $i;

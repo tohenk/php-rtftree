@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -115,12 +115,10 @@ class DocObject
     {
         if ($this->node && ($node = $this->node->selectSingleChildNode($prop))) {
             $value = $node->getParameter();
-
             return true;
         } else {
             $value = $default;
         }
-
         return false;
     }
 
@@ -137,12 +135,10 @@ class DocObject
             foreach ($keys as $key) {
                 if ($this->node->selectSingleChildNode($key)) {
                     $match = $key;
-
                     return true;
                 }
             }
         }
-
         return false;
     }
 
@@ -188,7 +184,6 @@ class DocObject
     public function setWidth($width)
     {
         $this->width = $width;
-
         return $this;
     }
 
@@ -212,7 +207,6 @@ class DocObject
     public function setHeight($height)
     {
         $this->height = $height;
-
         return $this;
     }
 
@@ -234,7 +228,6 @@ class DocObject
                 $this->binaryData = $this->toBin($this->hexData);
             }
         }
-
         return $this;
     }
 }

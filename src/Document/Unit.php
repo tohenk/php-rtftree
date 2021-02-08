@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -41,13 +41,13 @@ class Unit
      */
     protected $type = self::NATIVE;
 
-    protected $typeNames = array(
+    protected $typeNames = [
         self::NATIVE    => 'Native',
         self::INCH      => 'Inch',
         self::CM        => 'Cm',
         self::MM        => 'Mm',
         self::PIXEL     => 'Pixel',
-    );
+    ];
 
     /**
      * Constructor.
@@ -80,7 +80,6 @@ class Unit
     public function setType($type)
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -97,24 +96,19 @@ class Unit
             case static::NATIVE:
                 $value = floor($value);
                 break;
-
             case static::INCH:
                 $value = floor($value * self::TWIPS);
                 break;
-
             case static::CM:
                 $value = floor($value / 2.54 * self::TWIPS);
                 break;
-
             case static::MM:
                 $value = floor($value / 25.4 * self::TWIPS);
                 break;
-
             case static::PIXEL:
                 $value = floor($value * 20);
                 break;
         }
-
         return $value;
     }
 
@@ -130,24 +124,19 @@ class Unit
         switch ($unit) {
             case static::NATIVE:
                 break;
-
             case static::INCH:
                 $value = $value / self::TWIPS;
                 break;
-
             case static::CM:
                 $value = ($value / self::TWIPS) * 2.54;
                 break;
-
             case static::MM:
                 $value = ($value / self::TWIPS) * 25.4;
                 break;
-
             case static::PIXEL:
                 $value = $value / 20;
                 break;
         }
-
         return $value;
     }
 }

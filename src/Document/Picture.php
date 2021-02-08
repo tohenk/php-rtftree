@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -87,7 +87,6 @@ class Picture extends DocObject
     public function setDesiredWidth($desiredWidth)
     {
         $this->desiredWidth = $desiredWidth;
-
         return $this;
     }
 
@@ -111,7 +110,6 @@ class Picture extends DocObject
     public function setDesiredHeight($desiredHeight)
     {
         $this->desiredHeight = $desiredHeight;
-
         return $this;
     }
 
@@ -134,7 +132,6 @@ class Picture extends DocObject
     public function setScaleX($scaleX)
     {
         $this->scaleX = $scaleX;
-
         return $this;
     }
 
@@ -157,7 +154,6 @@ class Picture extends DocObject
     public function setScaleY($scaleY)
     {
         $this->scaleY = $scaleY;
-
         return $this;
     }
 
@@ -183,7 +179,7 @@ class Picture extends DocObject
 
     protected function readImage()
     {
-        $this->findChild(array('jpegblip', 'pngblip', 'emfblip', 'wmetafile', 'dibitmap', 'wbitmap'), $this->imageFormat);
+        $this->findChild(['jpegblip', 'pngblip', 'emfblip', 'wmetafile', 'dibitmap', 'wbitmap'], $this->imageFormat);
         if ($this->node) {
             // (Word 97-2000): {\*\shppict {\pict\jpegblip <datos>}}{\nonshppict {\pict\wmetafile8 <datos>}}
             // (Wordpad)     : {\pict\wmetafile8 <datos>}
@@ -219,17 +215,14 @@ class Picture extends DocObject
                 $handle = @imagecreatefromjpeg($filename);
                 $type = 'jpegblip';
                 break;
-
             case '.png':
                 $handle = @imagecreatefrompng($filename);
                 $type = 'pngblip';
                 break;
-
             case '.bmp':
                 $handle = @imagecreatefromwbmp($filename);
                 $type = 'dibitmap';
                 break;
-
             default:
                 throw new \InvalidArgumentException(sprintf('Unsupported image %s.', $extension));
                 break;
@@ -270,7 +263,6 @@ class Picture extends DocObject
             $picNode->appendChild(Node::create(Node::TEXT, strtolower($data)));
         }
         $node->appendChild($picNode);
-
         return $node;
     }
 }

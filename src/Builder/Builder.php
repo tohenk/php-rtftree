@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -133,7 +133,6 @@ class Builder
     public function setAddClosingParagraph($value)
     {
         $this->addClosingParapgraph = $value;
-
         return $this;
     }
 
@@ -156,7 +155,6 @@ class Builder
     public function setDetectFontFamilies($value)
     {
         $this->detectFontFamilies = $value;
-
         return $this;
     }
 
@@ -221,7 +219,6 @@ class Builder
             return false;
         }
         $this->getTree()->addMainGroup();
-
         return true;
     }
 
@@ -235,7 +232,6 @@ class Builder
         if (null === $this->font) {
             $this->font = new Font();
         }
-
         return $this;
     }
 
@@ -254,7 +250,6 @@ class Builder
             $this->parent = $this->data;
         }
         $this->parent->appendChild($node);
-
         return $this;
     }
 
@@ -271,7 +266,6 @@ class Builder
                 $this->addNode($node);
             }
         }
-
         return $this;
     }
 
@@ -287,7 +281,6 @@ class Builder
         if (!($pard = $this->getMainGroup()->selectSingleNode('pard'))) {
             throw new \Exception('Unable to find first paragraph node.');
         }
-
         return $pard->getNodeIndex();
     }
 
@@ -302,7 +295,6 @@ class Builder
     {
         $pard = $this->getFirstPard();
         $this->getMainGroup()->insertChild($pard, $node);
-
         return $this;
     }
 
@@ -324,7 +316,6 @@ class Builder
                 $node->setParameter($this->getDocument()->getLcid());
             }
         }
-
         return $this;
     }
 
@@ -337,7 +328,7 @@ class Builder
             $this->insertEntity($node);
         }
         // check for existing fonts
-        $fonts = array();
+        $fonts = [];
         foreach ($node->selectNodesTyped(Node::GROUP) as $cnode) {
             if (null === ($fInfo = FontTable::extract($cnode))) {
                 continue;
@@ -359,7 +350,6 @@ class Builder
         foreach ($fonts as $fNode) {
             $node->removeChild($fNode);
         }
-
         return $this;
     }
 
@@ -372,8 +362,8 @@ class Builder
             $this->insertEntity($node);
         }
         // check for existing colors
-        $colors = array();
-        $nodes = array();
+        $colors = [];
+        $nodes = [];
         foreach (ColorTable::extract($node) as $data) {
             $colors[] = $data[0];
             $nodes[] = $data[1];
@@ -394,7 +384,6 @@ class Builder
                 $node->removeChild($cnode);
             }
         }
-
         return $this;
     }
 
@@ -415,13 +404,12 @@ class Builder
                 $textNode->setKey($generator.';');
             }
         }
-
         return $this;
     }
 
     protected function buildDocSettings()
     {
-        foreach (array(
+        foreach ([
             'viewkind'  => $this->document->getViewkind(),
             'viewscale' => $this->document->getViewscale(),
             'paperw'    => $this->document->getPageSetup()->getWidth(Unit::NATIVE),
@@ -430,7 +418,7 @@ class Builder
             'margr'     => $this->document->getPageSetup()->getMarginRight(Unit::NATIVE),
             'margt'     => $this->document->getPageSetup()->getMarginTop(Unit::NATIVE),
             'margb'     => $this->document->getPageSetup()->getMarginBottom(Unit::NATIVE),
-        ) as $key => $value) {
+        ] as $key => $value) {
             if (null === $value) {
                 continue;
             }
@@ -441,7 +429,6 @@ class Builder
                 $node->setParameter($value);
             }
         }
-
         return $this;
     }
 
@@ -454,7 +441,6 @@ class Builder
         if ($this->addClosingParapgraph || !$this->data->getLastChild()->isEquals('par')) {
             $this->getMainGroup()->appendChild(Node::create(Node::KEYWORD, 'par'));
         }
-
         return $this;
     }
 
@@ -470,7 +456,6 @@ class Builder
             $this->useDefaultFont();
         }
         $this->addNodes(Node::createText($text, true));
-
         return $this;
     }
 
@@ -488,7 +473,6 @@ class Builder
         }
         $fontTable = $fontTables->getKey($font->getName());
         $this->addNode(Node::create(Node::KEYWORD, 'f', true, $fontTable->getIndex()));
-
         return $this;
     }
 
@@ -505,7 +489,6 @@ class Builder
             $colorTables->add(new ColorTable($font->getColor()->getValue()));
         }
         $this->addNode(Node::create(Node::KEYWORD, 'cf', true, $colorTables->indexOfKey($font->getColor()->getValue())));
-
         return $this;
     }
 
@@ -518,7 +501,6 @@ class Builder
     protected function buildFontSize(Font $font)
     {
         $this->addNode(Node::create(Node::KEYWORD, 'fs', true, round($font->getSize() * 2)));
-
         return $this;
     }
 
@@ -535,7 +517,6 @@ class Builder
         } else {
             $this->addNode(Node::create(Node::KEYWORD, 'b', true, 0));
         } 
-
         return $this;
     }
 
@@ -552,7 +533,6 @@ class Builder
         } else {
             $this->addNode(Node::create(Node::KEYWORD, 'i', true, 0));
         } 
-
         return $this;
     }
 
@@ -569,7 +549,6 @@ class Builder
         } else {
             $this->addNode(Node::create(Node::KEYWORD, 'ulnone'));
         } 
-
         return $this;
     }
 
@@ -591,7 +570,6 @@ class Builder
                 $this->parent = $this->data;
             }
         }
-
         return $this;
     }
 
@@ -604,7 +582,6 @@ class Builder
     protected function buildParagraphAlignment(Paragraph $paragraph)
     {
         $this->addNode(Node::create(Node::KEYWORD, Paragraph::getKeyword($paragraph->getAlignment())));
-
         return $this;
     }
 
@@ -627,7 +604,6 @@ class Builder
         if (($flags & 0x04) === 0x04 && null !== ($value = $paragraph->getRightIndent())) {
             $this->addNode(Node::create(Node::KEYWORD, 'ri', true, $value));
         }
-
         return $this;
     }
 
@@ -639,7 +615,6 @@ class Builder
     public function useDefaultFont()
     {
         $this->updateFont($this->defaultFont);
-
         return $this;
     }
 
@@ -656,7 +631,6 @@ class Builder
             $this->updateFont($font);
         }
         $this->buildText($text);
-
         return $this;
     }
 
@@ -672,7 +646,6 @@ class Builder
             $this->addNode(Node::create(Node::KEYWORD, 'line'));
             $count--;
         }
-
         return $this;
     }
 
@@ -688,7 +661,6 @@ class Builder
             $this->addNode(Node::create(Node::KEYWORD, 'par'));
             $count--;
         }
-
         return $this;
     }
 
@@ -702,7 +674,6 @@ class Builder
     {
         $this->addNewParagraph();
         $this->updateParagraph($paragraph);
-
         return $this;
     }
 
@@ -721,7 +692,6 @@ class Builder
         if (is_readable($filename)) {
             $this->addNode(Picture::create($filename, $width, $height, $scaleX, $scaleY, $this->getTree()->getIgnoreWhitespace() ? false : true));
         }
-
         return $this;
     }
 
@@ -734,7 +704,6 @@ class Builder
     public function addWhitespace($str = "\r\n")
     {
         $this->addNode(Node::create(Node::WHITESPACE, $str));
-
         return $this;
     }
 
@@ -746,7 +715,6 @@ class Builder
     public function addCharReset()
     {
         $this->addNode(Node::create(Node::KEYWORD, 'plain'));
-
         return $this;
     }
 
@@ -758,7 +726,6 @@ class Builder
     public function addParagraphReset()
     {
         $this->addNode(Node::create(Node::KEYWORD, 'pard'));
-
         return $this;
     }
 
@@ -772,7 +739,6 @@ class Builder
         $this
             ->addCharReset()
             ->addParagraphReset();
-
         return $this;
     }
 
@@ -819,7 +785,6 @@ class Builder
                 $this->setFontStrikethrough($font->getStrikethrough());
             }
         }
-
         return $this;
     }
 
@@ -835,7 +800,6 @@ class Builder
             $this->setParagraphAlignment($paragraph->getAlignment());
             $this->setParagraphIndent($paragraph->getIndent(), $paragraph->getLeftIndent(), $paragraph->getRightIndent());
         }
-
         return $this;
     }
 
@@ -851,7 +815,6 @@ class Builder
             $this->paragraph->setAlignment($alignment);
             $this->buildParagraphAlignment($this->paragraph);
         }
-
         return $this;
     }
 
@@ -881,7 +844,6 @@ class Builder
         if ($updates > 0) {
             $this->buildParagraphIndent($this->paragraph, $updates);
         }
-
         return $this;
     }
 
@@ -898,7 +860,6 @@ class Builder
             $this->font->setBold((bool) $value);
             $this->buildFontBold($this->font);
         }
-
         return $this;
     }
 
@@ -915,7 +876,6 @@ class Builder
             $this->font->setUnderline((bool) $value);
             $this->buildFontUnderline($this->font);
         }
-
         return $this;
     }
 
@@ -932,7 +892,6 @@ class Builder
             $this->font->setItalic((bool) $value);
             $this->buildFontItalic($this->font);
         }
-
         return $this;
     }
 
@@ -949,7 +908,6 @@ class Builder
             $this->font->setStrikethrough((bool) $value);
             $this->buildFontStrikethrough($this->font);
         }
-
         return $this;
     }
 
@@ -966,7 +924,6 @@ class Builder
             $this->font->getColor()->setValue($value);
             $this->buildFontColor($this->font);
         }
-
         return $this;
     }
 
@@ -983,7 +940,6 @@ class Builder
             $this->font->setSize($size);
             $this->buildFontSize($this->font);
         }
-
         return $this;
     }
 
@@ -1000,7 +956,6 @@ class Builder
             $this->font->setName($name);
             $this->buildFontName($this->font);
         }
-
         return $this;
     }
 
@@ -1019,10 +974,8 @@ class Builder
             $this->buildGenerator();
             $this->buildDocSettings();
             $this->buildData();
-
             $this->dirty = false;
         }
-
         return $this;
     }
 
@@ -1040,7 +993,6 @@ class Builder
             }
             $this->getMainGroup()->removeChild($node);
         }
-
         return $this;
     }
 
@@ -1061,7 +1013,6 @@ class Builder
         }
         $this->document->reset();
         $this->initializeDoc();
-
         return $this;
     }
 
@@ -1073,7 +1024,6 @@ class Builder
     public function getRtf()
     {
         $this->updateTree();
-
         return $this->getTree()->getRtf();
     }
 
@@ -1085,7 +1035,6 @@ class Builder
     public function getText()
     {
         $this->updateTree();
-
         return $this->getTree()->getText();
     }
 
@@ -1099,7 +1048,6 @@ class Builder
     {
         $this->updateTree();
         file_put_contents($filename, $this->getRtf());
-
         return $this;
     }
 }

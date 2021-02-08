@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2014 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2014-2021 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -53,12 +53,12 @@ class Paragraph
      */
     protected $rightIndent;
 
-    protected static $keywords = array(
+    protected static $keywords = [
         self::ALIGN_LEFT    => 'ql',
         self::ALIGN_CENTER  => 'qc',
         self::ALIGN_RIGHT   => 'qr',
         self::ALIGN_JUSTIFY => 'qj',
-    );
+    ];
 
     /**
      * Get paragraph alignment keyword.
@@ -101,7 +101,6 @@ class Paragraph
     public function setAlignment($alignment)
     {
         $this->alignment = $alignment;
-
         return $this;
     }
 
@@ -125,7 +124,6 @@ class Paragraph
     public function setIndent($indent)
     {
         $this->indent = $indent;
-
         return $this;
     }
 
@@ -149,7 +147,6 @@ class Paragraph
     public function setLeftIndent($leftIndent)
     {
         $this->leftIndent = $leftIndent;
-
         return $this;
     }
 
@@ -173,7 +170,6 @@ class Paragraph
     public function setRightIndent($rightIndent)
     {
         $this->rightIndent = $rightIndent;
-
         return $this;
     }
 
@@ -188,7 +184,6 @@ class Paragraph
         $this->indent = null;
         $this->leftIndent = null;
         $this->rightIndent = null;
-
         return $this;
     }
 }
