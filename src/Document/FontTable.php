@@ -278,8 +278,8 @@ class FontTable
                 $fIndex = $cnode->getParameter();
                 continue;
             }
-            if ('f' === substr($cnode->getKey(), 0, 1)) {
-                $fType = substr($cnode->getKey(), 1);
+            if ('f' === substr((string) $cnode->getKey(), 0, 1)) {
+                $fType = substr((string) $cnode->getKey(), 1);
                 if ($cnode->hasParameter()) {
                     switch ($fType) {
                         case 'charset':
@@ -301,7 +301,7 @@ class FontTable
                 continue;
             }
             if ($cnode->is(Node::TEXT)) {
-                $fName = substr($cnode->getKey(), 0, -1);
+                $fName = substr((string) $cnode->getKey(), 0, -1);
                 continue;
             }
         }

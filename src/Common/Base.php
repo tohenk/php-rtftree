@@ -174,7 +174,7 @@ abstract class Base
     {
         $keys = is_array($keys) ? $keys : [$keys];
         foreach ($keys as $key) {
-            if (strtolower($this->key) === strtolower($key)) {
+            if (strtolower((string) $this->key) === strtolower($key)) {
                 return true;
             }
         }

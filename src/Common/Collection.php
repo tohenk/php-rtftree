@@ -246,17 +246,17 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
         return false;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->items);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->items[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->checkItem($value);
         if (null === $offset) {
@@ -267,18 +267,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable
         }
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->items[$offset]);
         $this->maintain();
     }
 
-    public function getIterator()
+    public function getIterator(): \Iterator
     {
         return new \ArrayIterator($this->items);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }

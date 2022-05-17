@@ -47,9 +47,9 @@ class IndexedText
      */
     public function add($text, Node $node)
     {
-        if (strlen($text)) {
-            $position = mb_strlen($this->text);
-            $this->indexes[$position] = [mb_strlen($text), $node];
+        if (strlen((string) $text)) {
+            $position = mb_strlen((string) $this->text);
+            $this->indexes[$position] = [mb_strlen((string) $text), $node];
             $this->text .= $text;
         }
         return $this;
